@@ -1,0 +1,6 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { AtelierLayout } from '@/components/atelier/layout';
+import { CollectionGallery } from '@/components/atelier/collection-gallery';
+import { pageHead } from '@/lib/collection';
+export const Route = createFileRoute('/collection')({ head: () => pageHead('The Collection', 'Explore the E\'SHOE ATELIER photographic collection preview. Discover black sneakers and understated slides through an independent South African perspective.', '/collection'), component: Collection });
+function Collection() { return <AtelierLayout><section className="collection-intro section-wrap"><span className="eyebrow text-primary">THE E'SHOE ATELIER EDIT</span><div className="collection-intro-row"><h1>The collection.</h1><p>Everyday silhouettes.<br />An individual point of view.</p></div><div className="intro-bottom"><span className="eyebrow">ELEGANCE IN EVERY STEP.</span><span className="eyebrow">03 SELECTED SILHOUETTES</span></div></section><section className="section-wrap catalogue-section"><CollectionGallery filters /><p className="preview-note">Reference photography only. Prices, sizes and availability will be published once confirmed. Orders are not yet open.</p></section></AtelierLayout>; }
