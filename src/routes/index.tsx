@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { AtelierLayout, BrandMark } from '@/components/atelier/layout';
 import { CollectionGallery } from '@/components/atelier/collection-gallery';
 import { pageHead } from '@/lib/collection';
-import sneaker from '@/assets/sneaker-cutout.png.asset.json';
 
 export const Route = createFileRoute('/')({
   head: () => pageHead('Elegance in Every Step.', 'Discover E\'SHOE ATELIER, an independent South African footwear atelier. Considered silhouettes, a timeless perspective, and elegance in every step.', '/'),
@@ -14,7 +13,7 @@ function Index() {
   return <AtelierLayout>
     <section className="atelier-hero" aria-labelledby="hero-title">
       <div className="hero-topline"><span className="eyebrow">ELEGANCE. COMFORT. CLASS.</span><span className="eyebrow">THE ATELIER / 2026</span></div>
-      <div className="hero-stage"><h1 id="hero-title" className="hero-wordmark"><span>E'SHOE</span><span>ATELIER</span></h1><div className="hero-sneaker"><img src={sneaker.url} alt="A black low-top sneaker, floating in front of the E'SHOE ATELIER wordmark" fetchPriority="high" /><div className="sneaker-shadow" /></div><span className="hero-caption"><span className="caption-line" />A DIFFERENT KIND OF EVERYDAY.</span><span className="hero-coordinate">EST. 2026<br />SOUTH AFRICA</span></div>
+      <div className="hero-stage"><h1 id="hero-title" className="hero-wordmark"><span>E'SHOE</span><span>ATELIER</span></h1><span className="hero-caption"><span className="caption-line" />A DIFFERENT KIND OF EVERYDAY.</span><span className="hero-coordinate">EST. 2026<br />SOUTH AFRICA</span></div>
       <div className="hero-bottom"><div><p className="hero-tagline">Elegance in Every Step.</p><p className="hero-support">Considered footwear. Unmistakably you.</p></div><Button asChild className="collection-cta"><Link to="/collection">Discover the collection <ArrowUpRight size={18} /></Link></Button></div>
       <a href="#selected" className="scroll-cue" aria-label="Scroll to selected silhouettes"><ArrowDown size={14} /><span>SCROLL TO DISCOVER</span></a>
     </section>
