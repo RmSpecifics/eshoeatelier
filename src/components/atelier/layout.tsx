@@ -1,33 +1,25 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowUpRight, Menu, X, Plus } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { ArrowUpRight, Menu, X, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 
 export function BrandMark({ className = '' }: { className?: string }) {
   return <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 1L14.8 9.2L23 12L14.8 14.8L12 23L9.2 14.8L1 12L9.2 9.2Z" stroke="currentColor" strokeWidth="1" /><path d="M12 7V17M7 12H17" stroke="currentColor" strokeWidth=".6" /></svg>;
 }
-export function AtelierLayout({ children }: { children: ReactNode }) {
+export function AtelierLayout({ children, catalogue = false }: { children: ReactNode; catalogue?: boolean }) {
   const [menu, setMenu] = useState(false);
+  const [announcement, setAnnouncement] = useState(true);
   const [information, setInformation] = useState(false);
   const pathname = useRouterState({ select: s => s.location.pathname });
-  const cursor = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const move = (e: MouseEvent) => { if (cursor.current) { cursor.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`; cursor.current.style.opacity = '1'; } };
-    const leave = () => { if (cursor.current) cursor.current.style.opacity = '0'; };
-    window.addEventListener('mousemove', move); document.addEventListener('mouseleave', leave);
-    return () => { window.removeEventListener('mousemove', move); document.removeEventListener('mouseleave', leave); };
-  }, []);
   useEffect(() => setMenu(false), [pathname]);
-  return <div className="atelier-shell">
+  return <div className={`atelier-shell ${catalogue ? 'catalogue-shell' : ''} ${announcement ? '' : 'no-announcement'}`}>
     <a className="skip-link" href="#main">Skip to content</a>
-    <div ref={cursor} className="atelier-cursor" aria-hidden="true" />
-    <div className="announcement"><span>INDEPENDENT SPIRIT. CONSIDERED STYLE.</span><span>SOUTH AFRICA <span className="text-primary">↗</span></span></div>
+    {announcement && <div className="announcement"><span>Elegance in Every Step.</span><Button variant="ghost" size="icon" aria-label="Dismiss announcement" onClick={() => setAnnouncement(false)}><X size={12} /></Button></div>}
     <header className="site-header">
-      <Link to="/" className="brand" aria-label="E'SHOE ATELIER home"><BrandMark className="text-primary" /><span>E'SHOE <span className="brand-atelier">ATELIER</span></span></Link>
-      <nav className="desktop-nav" aria-label="Main navigation"><Link to="/collection" activeProps={{ className: 'nav-active' }}>The collection</Link><Link to="/story" activeProps={{ className: 'nav-active' }}>Our story</Link></nav>
-      <Button asChild variant="outline" className="header-cta"><Link to="/collection">Enter the atelier <ArrowUpRight /></Link></Button>
-      <Button variant="ghost" size="icon" className="mobile-menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</Button>
+      <Link to="/" className="brand" aria-label="E'SHOE ATELIER home"><span>E'SHOE</span><span className="brand-atelier">ATELIER</span></Link>
+      <nav className="desktop-nav" aria-label="Main navigation"><Link to="/collection" activeProps={{ className: 'nav-active' }}>Shoes</Link><Link to="/story" activeProps={{ className: 'nav-active' }}>Discover E'SHOE ATELIER</Link></nav>
+      <div className="header-actions"><Button asChild variant="ghost" size="icon" aria-label="Search shoes"><Link to="/collection" hash="catalogue"><Search /></Link></Button><Button variant="ghost" size="icon" className="mobile-menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</Button></div>
     </header>
     {menu && <nav className="mobile-nav" aria-label="Mobile navigation"><Link to="/">Home</Link><Link to="/collection">The collection <ArrowUpRight /></Link><Link to="/story">Our story <ArrowUpRight /></Link></nav>}
     <main id="main" key={pathname} className="page-enter">{children}</main>

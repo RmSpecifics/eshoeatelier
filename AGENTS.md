@@ -13,3 +13,5 @@
 - Keep shared atelier navigation and footer in a reusable layout and each content section in its own TanStack route, so navigation remains explicit and page metadata stays independent.
 - Keep reference footwear data in a browser-safe module and mark it as preview-only until confirmed product records exist; never infer prices, brands, stock or checkout availability from photographs.
 - Store owner-uploaded photographs as Lovable Assets pointers and keep presentation motion in semantic-token CSS with reduced-motion fallbacks.
+
+- Reuse the catalogue presentation on the home and collection routes, keeping product filtering and photo dialogs shared to prevent divergent catalogue behavior.
