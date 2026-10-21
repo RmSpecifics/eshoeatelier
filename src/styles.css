@@ -188,7 +188,7 @@ a,button { -webkit-tap-highlight-color: transparent; }
  .desktop-nav { display: none; } .mobile-menu { display: inline-flex; }
  .header-actions { margin-left: auto; padding-top: 0; }
  .catalogue-cover { height: 455px; }
- .catalogue-cover > img { object-position: 62% center; }
+ .catalogue-cover > img { top: 85px; height: 230px; object-fit: contain; object-position: center; }
  .catalogue-cover::after { background: linear-gradient(0deg,var(--background),transparent 60%); }
  .cover-copy { left: 16px; bottom: 24px; width: 250px; } .cover-copy h1 { font-size: 26px; }
  .filter-tabs { padding: 0 16px; gap: 22px; }
