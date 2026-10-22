@@ -1,4 +1,5 @@
 # E'SHOE ATELIER
+- [ ] Set up the sender domain and connect checkout order notifications; sending verification is blocked until notify.rmspecifics.co.za DNS verification completes.
 - [x] Recreate the captured Berluti shoes page layout with E'SHOE ATELIER branding, black text and no floating shoe. Exact source copying remains unavailable because the source site blocked import; owner photographs retained.
 - [x] Stage 1: Branded homepage, floating sneaker, story/timeline and photographic catalogue; desktop/mobile verification.
 - [ ] Stage 2: Connected shop, product pricing, sizes, wishlist and checkout. Blocked pending confirmed product details and next-stage approval.
