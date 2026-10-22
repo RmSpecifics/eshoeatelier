@@ -17,7 +17,7 @@ export function AtelierLayout({ children, catalogue = false }: { children: React
     <a className="skip-link" href="#main">Skip to content</a>
     {announcement && <div className="announcement"><span>Elegance in Every Step.</span><Button variant="ghost" size="icon" aria-label="Dismiss announcement" onClick={() => setAnnouncement(false)}><X size={12} /></Button></div>}
     <header className="site-header">
-      <Link to="/" className="brand" aria-label="E'SHOE ATELIER home"><span>E'SHOE</span><span className="brand-atelier">ATELIER</span></Link>
+      <Link to="/" className="brand" aria-label="E'SHOE ATELIER home"><span>{'\n'}</span><span className="brand-atelier">{'\n'}</span></Link>
       <nav className="desktop-nav" aria-label="Main navigation"><Link to="/collection" activeProps={{ className: 'nav-active' }}>Shoes</Link><Link to="/story" activeProps={{ className: 'nav-active' }}>Discover E'SHOE ATELIER</Link></nav>
       <div className="header-actions"><Button asChild variant="ghost" size="icon" aria-label="Search shoes"><Link to="/collection" hash="catalogue"><Search /></Link></Button><Button variant="ghost" size="icon" className="mobile-menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</Button></div>
     </header>
