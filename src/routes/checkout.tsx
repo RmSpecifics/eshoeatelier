@@ -6,7 +6,7 @@ import { AtelierLayout } from '../components/atelier/layout';
 import { collection, formatPrice, pageHead, SIZES } from '../lib/collection';
 
 export const Route = createFileRoute('/checkout')({
-  validateSearch: (s: Record<string, unknown>) => ({ piece: typeof s.piece === 'string' ? s.piece : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
   head: () => pageHead('Checkout', "Select your shoe, size and delivery, then place your order with E'SHOE ATELIER.", '/checkout'),
   component: CheckoutPage,
 });
@@ -17,7 +17,7 @@ const STEPS = ['Shoe', 'Size', 'Quantity', 'Delivery', 'Your details', 'Review']
 function CheckoutPage() {
   const search = Route.useSearch();
   const [step, setStep] = useState(search.piece ? 2 : 1);
-  const [pieceId, setPieceId] = useState(search.piece ?? collection[0].id);
+  const [pieceId, setPieceId] = useState(search.piece ?? collection[0]!.id);
   const [size, setSize] = useState('');
   const [qty, setQty] = useState(1);
   const [delivery, setDelivery] = useState<Delivery>('delivery');
@@ -25,7 +25,7 @@ function CheckoutPage() {
   const [error, setError] = useState('');
   const [orderNo, setOrderNo] = useState('');
 
-  const piece = collection.find(p => p.id === pieceId) ?? collection[0];
+  const piece = collection.find(p => p.id === pieceId) ?? collection[0]!;
   const subtotal = piece.price === undefined ? undefined : piece.price * qty;
 
   function next() {
