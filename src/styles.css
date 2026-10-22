@@ -211,3 +211,23 @@ a,button { -webkit-tap-highlight-color: transparent; }
  .gallery-photo > img { height: 270px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+/* Typography scale */
+@theme inline { --font-editorial: 'Playfair Display', Georgia, serif; --font-sans: 'Inter', system-ui, sans-serif; }
+body { font-family: 'Inter', system-ui, sans-serif; font-size: 15px; }
+h1,h2,h3,.font-editorial { font-family: 'Playfair Display', Georgia, serif; }
+h1 { font-weight: 700; }
+h2 { font-weight: 700; }
+.story-intro h1 { font-size: clamp(44px, 6vw, 72px); }
+.timeline-row h2, .closing-statement p { font-size: clamp(32px, 3.5vw, 44px); font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
+.cover-copy h1 { font-size: clamp(36px, 5vw, 60px); line-height: 1.05; }
+.piece-meta h3 { font-weight: 500; font-size: clamp(20px, 2vw, 24px); }
+.desktop-nav, .desktop-nav a, .filter-tabs button, .catalogue-toolbar { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; }
+.cover-copy p, .preview-note, .piece-meta .eyebrow, .piece-status { font-family: 'Inter', sans-serif; font-weight: 400; }
+.product-price { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 20px; }
+.sale-badge { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; }
+.add-to-cart { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+.catalogue-cover { height: min(70vw, 620px); }
+.catalogue-cover > img { object-fit: cover; object-position: center; }
+.catalogue-cover::after { background: linear-gradient(0deg, color-mix(in oklch,var(--background) 85%,transparent), transparent 45%); }
+.cover-copy { width: min(420px, 80%); }
+@media(max-width:640px){ .catalogue-cover { height: 420px; } .catalogue-cover > img { top: 0; height: 100%; object-fit: cover; } .cover-copy h1 { font-size: 34px; } }
