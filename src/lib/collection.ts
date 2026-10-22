@@ -16,7 +16,7 @@ import muleBlackTop from '@/assets/adidas-mule-black-top.png.asset.json';
 import muleBlackSide from '@/assets/adidas-mule-black-side.png.asset.json';
 import muleBeigePair from '@/assets/adidas-mule-beige-pair.png.asset.json';
 
-export type CollectionPiece = { id: string; name: string; category: 'Sneakers' | 'Slides' | 'Mules'; colour: string; images: string[] };
+export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
   { id: '01', name: 'The black sneaker', category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'The olive slide', category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
@@ -29,3 +29,6 @@ export const collection: CollectionPiece[] = [
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
 }
+// Prices in ZAR: leave undefined until the owner confirms them (shown as "Price on request").
+export const SIZES = ['UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'];
+export const formatPrice = (p?: number) => (p === undefined ? 'Price on request' : `R${p.toLocaleString('en-ZA')}`);
