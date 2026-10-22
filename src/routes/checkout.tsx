@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
+import { submitOrder } from '../lib/orders.functions';
+import { orderSchema } from '../lib/order-schema';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { AtelierLayout } from '../components/atelier/layout';
@@ -17,15 +20,19 @@ const STEPS = ['Shoe', 'Size', 'Quantity', 'Delivery', 'Your details', 'Review']
 function CheckoutPage() {
   const search = Route.useSearch();
   const [step, setStep] = useState(search.piece ? 2 : 1);
-  const [pieceId, setPieceId] = useState(search.piece ?? collection[0]!.id);
+  const [pieceId, setPieceId] = useState(search.piece ?? collection[0]?.id ?? '');
   const [size, setSize] = useState('');
   const [qty, setQty] = useState(1);
   const [delivery, setDelivery] = useState<Delivery>('delivery');
   const [contact, setContact] = useState({ name: '', email: '', phone: '', address: '' });
   const [error, setError] = useState('');
   const [orderNo, setOrderNo] = useState('');
+  const [pending, setPending] = useState(false);
+  const [submissionId, setSubmissionId] = useState('');
+  const sendOrder = useServerFn(submitOrder);
 
-  const piece = collection.find(p => p.id === pieceId) ?? collection[0]!;
+  const piece = collection.find(p => p.id === pieceId) ?? collection[0];
+  if (!piece) return <AtelierLayout><main id="main"><h1>No shoes available</h1></main></AtelierLayout>;
   const subtotal = piece.price === undefined ? undefined : piece.price * qty;
 
   function next() {
@@ -37,8 +44,21 @@ function CheckoutPage() {
     setError('');
     setStep(s => Math.min(STEPS.length, s + 1));
   }
-  function placeOrder() {
-    setOrderNo(`ESA-${Date.now().toString(36).toUpperCase().slice(-6)}`);
+  async function placeOrder() {
+    if (pending) return;
+    const eventId = submissionId || crypto.randomUUID();
+    setSubmissionId(eventId);
+    const parsed = orderSchema.safeParse({ submissionId: eventId, pieceId, size, qty, delivery, contact });
+    if (!parsed.success) { setError('Please check your shoe, size and contact details.'); return; }
+    setPending(true);
+    setError('');
+    try {
+      const result = await sendOrder({ data: parsed.data });
+      if (result.ok) setOrderNo(result.orderNo);
+      else setError(result.message);
+    } catch {
+      setError('Your order could not be sent. Please try again. No payment has been taken.');
+    } finally { setPending(false); }
   }
 
   return (
@@ -61,7 +81,7 @@ function CheckoutPage() {
               {orderNo ? (
                 <>
                   <h2>Order {orderNo} received</h2>
-                  <p>Thank you, {contact.name}. Your order number is <strong>{orderNo}</strong>. We'll contact you at {contact.email} to confirm payment and {delivery === 'delivery' ? 'delivery' : 'collection'}.</p>
+                  <p>Thank you, {contact.name}. Your order request has been emailed to our team. Your order number is <strong>{orderNo}</strong>. We'll contact you at {contact.email} to confirm pricing, payment and {delivery === 'delivery' ? 'delivery' : 'collection'}. No payment has been taken.</p>
                   <Link to="/collection" className="piece-select">Continue shopping</Link>
                 </>
               ) : (
@@ -84,8 +104,8 @@ function CheckoutPage() {
                   {step === 6 && (<><h2>Review your order</h2><p>{qty} × {piece.name} ({piece.colour}), {size}, {delivery === 'delivery' ? `delivered to ${contact.address}` : 'for collection'}.</p><p className="text-sm text-muted-foreground">Payment is confirmed with you after you place the order.</p></>)}
                   {error && <p className="checkout-error" role="alert">{error}</p>}
                   <div className="checkout-nav">
-                    <Button variant="outline" disabled={step === 1} onClick={() => { setError(''); setStep(s => s - 1); }}><ArrowLeft /> Back</Button>
-                    {step < STEPS.length ? <Button onClick={next}>Continue <ArrowRight /></Button> : <Button onClick={placeOrder}>Place order <Check /></Button>}
+                    <Button variant="outline" disabled={step === 1 || pending} onClick={() => { setError(''); setStep(s => s - 1); }}><ArrowLeft /> Back</Button>
+                    {step < STEPS.length ? <Button onClick={next}>Continue <ArrowRight /></Button> : <Button disabled={pending} onClick={placeOrder}>{pending ? 'Sending order…' : 'Place order'} <Check /></Button>}
                   </div>
                 </>
               )}
