@@ -257,7 +257,11 @@ h2 { font-weight: 700; }
 .checkout-total { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; }
 .checkout-error { color: var(--destructive); font-size: 13px; margin-top: 12px; }
 @media (max-width: 860px) { .checkout-grid { grid-template-columns: 1fr; } .fields { grid-template-columns: 1fr; } .checkout { padding: 28px 16px 60px; } }
-.catalogue-shell:has(.catalogue-cover--brand) .site-header { position: relative; top: 0; background: var(--background); }
+.catalogue-shell:has(.catalogue-cover--brand) .announcement { position: absolute; z-index: 20; top: 0; left: 0; right: 0; background: transparent; color: var(--background); }
+.catalogue-shell:has(.catalogue-cover--brand) .site-header { background: transparent; color: var(--background); }
+.catalogue-shell:has(.catalogue-cover--brand) .desktop-nav a:hover,.catalogue-shell:has(.catalogue-cover--brand) .desktop-nav .nav-active { border-color: var(--background); }
+.catalogue-shell:has(.catalogue-cover--brand) .cover-copy { position: absolute; z-index: 1; left: 28px; bottom: 26px; width: auto; padding: 0; }
+.catalogue-shell:has(.catalogue-cover--brand) .cover-tagline { color: var(--background); }
 .catalogue-cover--brand { height: auto; background: var(--background); }
 .catalogue-cover--brand > img { position: static; display: block; width: 100%; height: auto; object-fit: contain; }
 .catalogue-cover--brand::after { display: none; }
