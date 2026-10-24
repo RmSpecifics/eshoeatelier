@@ -257,3 +257,10 @@ h2 { font-weight: 700; }
 .checkout-total { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; }
 .checkout-error { color: var(--destructive); font-size: 13px; margin-top: 12px; }
 @media (max-width: 860px) { .checkout-grid { grid-template-columns: 1fr; } .fields { grid-template-columns: 1fr; } .checkout { padding: 28px 16px 60px; } }
+.catalogue-shell:has(.catalogue-cover--brand) .site-header { position: relative; top: 0; background: var(--background); }
+.catalogue-cover--brand { height: auto; background: var(--background); }
+.catalogue-cover--brand > img { position: static; display: block; width: 100%; height: auto; object-fit: contain; }
+.catalogue-cover--brand::after { display: none; }
+.catalogue-cover--brand .cover-copy { position: static; width: auto; padding: 16px 28px; }
+.catalogue-cover--brand .cover-copy h1, .catalogue-cover--brand .cover-copy p:not(.cover-tagline) { display: none; }
+.catalogue-cover--brand .cover-tagline { margin-top: 0; }
