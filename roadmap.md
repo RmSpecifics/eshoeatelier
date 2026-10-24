@@ -1,5 +1,5 @@
 # E'SHOE ATELIER
-- [ ] Replace the website logo with the latest owner-uploaded ATELIER image.
+- [x] Replace the website logo with the latest owner-uploaded ATELIER image.
 - [x] Replace the catalogue cover with the uploaded black ATELIER image.
 - [ ] Add prices to all seven shoes. Blocked: the owner has not supplied price amounts.
 - [ ] Set up the sender domain and connect checkout order notifications; sending verification is blocked until notify.rmspecifics.co.za DNS verification completes.
