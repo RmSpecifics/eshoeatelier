@@ -1,4 +1,7 @@
 # E'SHOE ATELIER
+- [x] Replace logo artwork cover with cinematic footwear photography and restrained animation.
+- [x] Add owner-only price text boxes, saved prices and consistent catalogue/checkout totals.
+- [ ] Verify owner price saving end-to-end. Blocked: eshoesole@gmail.com must create and verify its owner account on Pricing first.
 - [x] Undo the uploaded navigation/footer logo and use the latest silver-on-black ATELIER image as the catalogue cover instead.
 - [ ] Add prices to all seven shoes. Blocked: the owner has not supplied price amounts.
 - [ ] Set up the sender domain and connect checkout order notifications; sending verification is blocked until notify.rmspecifics.co.za DNS verification completes.

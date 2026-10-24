@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Application structure
+- Store owner-entered ZAR prices in product_prices with public read and admin-role-only writes; use one shared price query across catalogue, pricing and checkout so totals stay consistent.
 - Keep shared atelier navigation and footer in a reusable layout and each content section in its own TanStack route, so navigation remains explicit and page metadata stays independent.
 - Keep reference footwear data in a browser-safe module and mark it as preview-only until confirmed product records exist; never infer prices, brands, stock or checkout availability from photographs.
 - Store owner-uploaded photographs as Lovable Assets pointers and keep presentation motion in semantic-token CSS with reduced-motion fallbacks.
