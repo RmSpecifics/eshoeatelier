@@ -271,6 +271,8 @@ h2 { font-weight: 700; }
 :root, .dark { --cover-background: oklch(0.16 0 0); --cover-foreground: oklch(0.98 0.005 90); --cover-accent: oklch(0.81 0.04 85); --cover-shade: linear-gradient(90deg, color-mix(in oklch,var(--cover-background) 72%,transparent),transparent 68%); }
 .catalogue-shell:has(.catalogue-cover--cinematic) .announcement { position:absolute; z-index:20; inset:0 0 auto; background:transparent; color:var(--cover-foreground); }
 .catalogue-shell:has(.catalogue-cover--cinematic) .site-header { color:var(--cover-foreground); }
+.catalogue-shell:has(.catalogue-cover--cinematic) .desktop-nav { color:var(--foreground); }
+@media(min-width:641px) { .catalogue-shell:has(.catalogue-cover--cinematic) .header-actions { color:var(--foreground); } }
 .catalogue-shell:has(.catalogue-cover--cinematic) .desktop-nav a:hover,.catalogue-shell:has(.catalogue-cover--cinematic) .nav-active { border-color:var(--cover-foreground); }
 .catalogue-shell:has(.catalogue-cover--cinematic) .mobile-nav { color:var(--foreground); }
 .catalogue-cover--cinematic { height: min(780px, calc(100svh - 65px)); min-height:460px; background:var(--cover-background); color:var(--cover-foreground); }
