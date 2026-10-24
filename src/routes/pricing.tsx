@@ -50,7 +50,7 @@ function Pricing() {
     {message && <p role="status">{message}</p>}
   </section></AtelierLayout>;
 }
-function PriceRow({ piece, price, saved }: { piece: typeof collection[number]; price?: number; saved: () => Promise<void> }) {
+function PriceRow({ piece, price, saved }: { piece: typeof collection[number]; price: number | undefined; saved: () => Promise<void> }) {
   const [amount, setAmount] = useState(price === undefined ? '' : String(price));
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
