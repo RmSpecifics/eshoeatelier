@@ -21,10 +21,10 @@ export const collection: CollectionPiece[] = [
   { id: '01', name: 'Chritian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'Mens Diesel Slides', price: 1560, category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
   { id: '03', name: 'Mens Diesel Slides', price: 1560, category: 'Slides', colour: 'Black', images: [slide.url, slidePair.url] },
-  { id: '04', name: 'Nike Vomero Roam', category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url] },
-  { id: '05', name: 'Nike Dunk Low', category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url] },
-  { id: '06', name: 'Adidas mule', category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url] },
-  { id: '07', name: 'Adidas mule', category: 'Mules', colour: 'Beige', images: [muleBeigePair.url] },
+  { id: '04', name: 'Nike Vomero Roam', price: 1750, category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url] },
+  { id: '05', name: 'Nike Dunk Low', price: 1500, category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url] },
+  { id: '06', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url] },
+  { id: '07', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Beige', images: [muleBeigePair.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
