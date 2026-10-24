@@ -1,4 +1,7 @@
 # E'SHOE ATELIER
+- [x] Replace the website logo with the latest owner-uploaded ATELIER image.
+- [x] Replace the catalogue cover with the uploaded black ATELIER image.
+- [ ] Add prices to all seven shoes. Blocked: the owner has not supplied price amounts.
 - [ ] Set up the sender domain and connect checkout order notifications; sending verification is blocked until notify.rmspecifics.co.za DNS verification completes.
 - [x] Recreate the captured Berluti shoes page layout with E'SHOE ATELIER branding, black text and no floating shoe. Exact source copying remains unavailable because the source site blocked import; owner photographs retained.
 - [x] Stage 1: Branded homepage, floating sneaker, story/timeline and photographic catalogue; desktop/mobile verification.
