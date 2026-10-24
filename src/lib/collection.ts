@@ -18,9 +18,9 @@ import muleBeigePair from '@/assets/adidas-mule-beige-pair.png.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
-  { id: '01', name: 'The black sneaker', category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
-  { id: '02', name: 'The olive slide', category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
-  { id: '03', name: 'The black slide', category: 'Slides', colour: 'Black', images: [slide.url, slidePair.url] },
+  { id: '01', name: 'Chritian Louboutin', category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
+  { id: '02', name: 'Mens Diesel Slides', category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
+  { id: '03', name: 'Mens Diesel Slides', category: 'Slides', colour: 'Black', images: [slide.url, slidePair.url] },
   { id: '04', name: 'Nike Vomero Roam', category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url] },
   { id: '05', name: 'Nike Dunk Low', category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url] },
   { id: '06', name: 'Adidas mule', category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url] },
