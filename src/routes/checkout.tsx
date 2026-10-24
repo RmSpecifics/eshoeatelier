@@ -7,8 +7,12 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { AtelierLayout } from '../components/atelier/layout';
 import { collection, formatPrice, pageHead, SIZES } from '../lib/collection';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { pricesQuery } from '../lib/prices-query';
+import { priceTotal } from '../lib/prices';
 
 export const Route = createFileRoute('/checkout')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(pricesQuery),
   validateSearch: (s: Record<string, unknown>) => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
   head: () => pageHead('Checkout', "Select your shoe, size and delivery, then place your order with E'SHOE ATELIER.", '/checkout'),
   component: CheckoutPage,
@@ -18,6 +22,7 @@ type Delivery = 'delivery' | 'collection';
 const STEPS = ['Shoe', 'Size', 'Quantity', 'Delivery', 'Your details', 'Review'];
 
 function CheckoutPage() {
+  const { data: prices } = useSuspenseQuery(pricesQuery);
   const search = Route.useSearch();
   const [step, setStep] = useState(search.piece ? 2 : 1);
   const [pieceId, setPieceId] = useState(search.piece ?? collection[0]?.id ?? '');
@@ -33,7 +38,8 @@ function CheckoutPage() {
 
   const piece = collection.find(p => p.id === pieceId) ?? collection[0];
   if (!piece) return <AtelierLayout><main id="main"><h1>No shoes available</h1></main></AtelierLayout>;
-  const subtotal = piece.price === undefined ? undefined : piece.price * qty;
+  const unitPrice = prices[piece.id];
+  const subtotal = priceTotal(unitPrice, qty);
 
   function next() {
     if (step === 2 && !size) return setError('Please choose a size.');
@@ -88,7 +94,7 @@ function CheckoutPage() {
                 <>
                   {step === 1 && (<><h2>Select your shoe</h2><div className="choice-grid">{collection.map(p => (
                     <button key={p.id} className="choice" aria-pressed={p.id === pieceId} onClick={() => setPieceId(p.id)}>
-                      <img src={p.images[0]} alt="" />{p.name}<small>{p.colour} · {formatPrice(p.price)}</small>
+                      <img src={p.images[0]} alt="" />{p.name}<small>{p.colour} · {formatPrice(prices[p.id])}</small>
                     </button>))}</div></>)}
                   {step === 2 && (<><h2>Select your size</h2><div className="choice-grid">{SIZES.map(s => (
                     <button key={s} className="choice" aria-pressed={s === size} onClick={() => setSize(s)}>{s}</button>))}</div></>)}
@@ -114,7 +120,7 @@ function CheckoutPage() {
           <aside className="checkout-summary" aria-label="Order summary">
             <img src={piece.images[0]} alt={piece.name} />
             <h2 className="font-editorial text-2xl mt-4 mb-3">{piece.name}</h2>
-            <dl><dt>Colour</dt><dd>{piece.colour}</dd><dt>Size</dt><dd>{size || '—'}</dd><dt>Quantity</dt><dd>{qty}</dd><dt>Unit price</dt><dd>{formatPrice(piece.price)}</dd><dt>{delivery === 'delivery' ? 'Delivery' : 'Collection'}</dt><dd>To be confirmed</dd></dl>
+            <dl><dt>Colour</dt><dd>{piece.colour}</dd><dt>Size</dt><dd>{size || '—'}</dd><dt>Quantity</dt><dd>{qty}</dd><dt>Unit price</dt><dd>{formatPrice(unitPrice)}</dd><dt>{delivery === 'delivery' ? 'Delivery' : 'Collection'}</dt><dd>To be confirmed</dd></dl>
             <div className="checkout-total"><span>Total</span><span>{subtotal === undefined ? 'On request' : formatPrice(subtotal)}</span></div>
           </aside>
         </div>
