@@ -18,3 +18,4 @@
 - Reuse the catalogue presentation on the home and collection routes, keeping product filtering and photo dialogs shared to prevent divergent catalogue behavior.
 - Submit checkout requests through a validated server function and send a fixed owner notification via the managed email helper; only show success after an accepted send, and derive idempotency from the submission ID to avoid duplicate notifications.
 - Keep email templates in the scaffolded registry and delivery managed by Lovable without email tables or queues; checkout remains an unpaid order request until a payment service is connected.
+- Take online payment through the connected Shopify store: each collection piece links to a Shopify product tagged piece-XX, the bag syncs a Storefront API cart, and checkout opens Shopify's hosted checkout in a new tab; Shopify product prices are what customers are charged.
