@@ -1,4 +1,4 @@
-import cover from '@/assets/atelier-black-cover.png.asset.json';
+import cover from '@/assets/atelier-logo.png.asset.json';
 import { CollectionGallery } from '@/components/atelier/collection-gallery';
 
 export function CataloguePage() {

@@ -15,6 +15,5 @@
 - Store owner-uploaded photographs as Lovable Assets pointers and keep presentation motion in semantic-token CSS with reduced-motion fallbacks.
 
 - Reuse the catalogue presentation on the home and collection routes, keeping product filtering and photo dialogs shared to prevent divergent catalogue behavior.
-- Render the owner logo asset from the shared layout in navigation and footer, so branding remains consistent across content routes.
 - Submit checkout requests through a validated server function and send a fixed owner notification via the managed email helper; only show success after an accepted send, and derive idempotency from the submission ID to avoid duplicate notifications.
 - Keep email templates in the scaffolded registry and delivery managed by Lovable without email tables or queues; checkout remains an unpaid order request until a payment service is connected.

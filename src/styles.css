@@ -264,7 +264,3 @@ h2 { font-weight: 700; }
 .catalogue-cover--brand .cover-copy { position: static; width: auto; padding: 16px 28px; }
 .catalogue-cover--brand .cover-copy h1, .catalogue-cover--brand .cover-copy p:not(.cover-tagline) { display: none; }
 .catalogue-cover--brand .cover-tagline { margin-top: 0; }
-.brand-image { width: 140px; flex-shrink: 0; }
-.brand-image img, .footer-logo img { display: block; width: 100%; height: auto; object-fit: contain; }
-.footer-logo { display: inline-block; width: 220px; }
-@media(max-width:640px) { .brand-image { width: 112px; } }
