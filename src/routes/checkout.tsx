@@ -12,7 +12,7 @@ import { eftSchema } from '../lib/eft-schema';
 
 export const Route = createFileRoute('/checkout')({
   loader: ({ context }) => context.queryClient.ensureQueryData(shopifyProductsQuery),
-  validateSearch: (s: Record<string, unknown>) => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { piece?: string } => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
   head: () => pageHead('Absa EFT Checkout', 'Place your E\'SHOE ATELIER order by Absa bank transfer with a unique payment reference and invoice.', '/checkout'),
   component: Checkout,
 });

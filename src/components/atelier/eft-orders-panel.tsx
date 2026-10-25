@@ -13,7 +13,7 @@ export function EftOrdersPanel() {
   async function verify(id: string, note: string, checked: boolean) {
     if (!checked || note.trim().length < 5) { setError('Confirm cleared funds and enter a verification note.'); return; }
     setBusy(true); setError('');
-    try { const result = await confirm({ data: { id, note, clearedFundsConfirmed: true } }); await refresh(); setError(result.receiptSent ? 'Payment verified and receipt emailed.' : 'Payment verified. Receipt email needs retrying.'); }
+    try { const result = await confirm({ data: { id, note, clearedFundsConfirmed: true } }); await refresh(); setError(`Payment verified. ${result.receiptSent ? 'Receipt emailed.' : 'Receipt email needs retrying.'} ${result.excelSynced ? 'Excel updated.' : 'Excel update needs retrying.'}`); }
     catch { setError('Payment could not be verified. Please try again.'); } finally { setBusy(false); }
   }
   return <section className="mt-12 border-t pt-8"><div className="flex items-center justify-between gap-4"><h2>EFT orders</h2><Button variant="outline" onClick={() => void refresh()}>Refresh</Button></div>{error && <p role="status">{error}</p>}{orders.length === 0 && <p>No EFT orders yet.</p>}{orders.map(o => <OrderRow key={o.id} order={o} busy={busy} verify={verify} />)}</section>;

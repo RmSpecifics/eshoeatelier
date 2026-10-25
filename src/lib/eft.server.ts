@@ -20,7 +20,7 @@ export async function placeEftOrder(input: EftInput) {
   const existing = await db.from('eft_orders').select('*').eq('id', data.submissionId).maybeSingle();
   if (existing.error) throw existing.error;
   let order = existing.data;
-  if (order && (order.customer_email !== data.contact.email || order.customer_name !== data.contact.name || order.customer_phone !== data.contact.phone || order.delivery !== data.delivery || order.address !== data.contact.address)) throw new Error('Use a new submission for changed details.');
+  if (order && (order.customer_email !== data.contact.email || order.customer_name !== data.contact.name || order.customer_phone !== data.contact.phone || order.delivery !== data.delivery || order.address !== data.contact.address || JSON.stringify((order.items as EftLine[]).map(l => ({ variantId: l.variantId, quantity: l.quantity }))) !== JSON.stringify(data.lines))) throw new Error('Use a new submission for changed details.');
   if (!order) {
     const items = resolveEftLines(data.lines, await fetchShopifyProducts());
     const inserted = await db.from('eft_orders').insert({ id: data.submissionId, order_no: `ESA-${data.submissionId.toUpperCase()}`, document_token: crypto.randomUUID()+crypto.randomUUID(), customer_name: data.contact.name, customer_email: data.contact.email, customer_phone: data.contact.phone, address: data.contact.address, delivery: data.delivery, items, total: items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0) }).select('*').single();
@@ -49,6 +49,19 @@ export async function verifyEft(id: string, userId: string, note: string) {
   if (error || !order) throw error ?? new Error('Order not found.');
   let sent = order.receipt_email_sent;
   if (!sent) { try { sent = (await sendCustomer(order, true)).sent; } catch { console.error('EFT receipt delivery failed'); } }
-  await db.from('eft_orders').update({ receipt_email_sent: sent }).eq('id', id);
-  return { paid: true, receiptSent: sent };
+  let synced = order.excel_synced;
+  if (!synced) { try { await syncExcel(order); synced = true; } catch { console.error('EFT Excel update failed'); } }
+  if (order.status === 'paid') { try { await sendTemplateEmail('eft-owner-paid', 'eshoesole@gmail.com', { idempotencyKey: `eft-owner-paid-${order.id}`, templateData: { orderNo: order.order_no, name: order.customer_name, total: `R${Number(order.total).toFixed(2)}` } }); } catch { console.error('Owner payment notification failed'); } }
+  const updated = await db.from('eft_orders').update({ receipt_email_sent: sent, excel_synced: synced }).eq('id', id);
+  if (updated.error) throw updated.error;
+  return { paid: true, receiptSent: sent, excelSynced: synced };
 }
+
+async function syncExcel(order: EftOrder) {
+  const key = process.env['MICROSOFT_EXCEL_API_KEY']; const auth = process.env['LOVABLE_API_KEY']; const workbook = process.env['EFT_EXCEL_WORKBOOK_ID'];
+  if (!key || !auth || !workbook || !order.excel_row) throw new Error('Excel connection unavailable.');
+  const row = order.excel_row;
+  const response = await fetch(`https://connector-gateway.lovable.dev/microsoft_excel/me/drive/items/${encodeURIComponent(workbook)}/workbook/worksheets/Paid%20orders/range(address='A${row}:I${row}')`, { method: 'PATCH', headers: { Authorization: `Bearer ${auth}`, 'X-Connection-Api-Key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ values: [[order.order_no, excelText(order.customer_name), excelText(order.customer_email), Number(order.total), 'Paid', order.verified_at ?? '', excelText(order.verification_note ?? ''), excelText((order.items as EftLine[]).map(l => `${l.quantity} x ${l.title} ${l.size}`).join('; ')), order.delivery]] }) });
+  if (!response.ok) { console.error('Excel update status', response.status, await response.text()); throw new Error('Excel update rejected'); }
+}
+function excelText(value: string) { return /^[=+\-@]/.test(value) ? `'${value}` : value; }
