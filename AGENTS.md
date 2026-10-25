@@ -20,3 +20,5 @@
 - Keep email templates in the scaffolded registry and delivery managed by Lovable without email tables or queues; checkout remains an unpaid order request until a payment service is connected.
 - Take online payment through the connected Shopify store: each collection piece links to a Shopify product tagged piece-XX, the bag syncs a Storefront API cart, and checkout opens Shopify's hosted checkout in a new tab; Shopify product prices are what customers are charged.
 - Access the linked Microsoft Excel account only through server-side connector gateway calls; keep its connection credentials out of browser code.
+- EFT checkout validates variants and prices on the server, persists an unpaid order, and releases PDF documents only through unguessable per-order tokens; administrators verify cleared funds before receipts and Excel updates.
+- Each EFT order has a permanent Excel row so retries overwrite the same register entry instead of duplicating payments.
