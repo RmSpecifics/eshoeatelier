@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      eft_orders: {
+        Row: {
+          address: string
+          created_at: string
+          customer_email: string
+          customer_email_sent: boolean
+          customer_name: string
+          customer_phone: string
+          delivery: string
+          document_token: string
+          excel_row: number
+          excel_synced: boolean
+          id: string
+          items: Json
+          order_no: string
+          owner_email_sent: boolean
+          receipt_email_sent: boolean
+          status: string
+          total: number
+          verification_note: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          address?: string
+          created_at?: string
+          customer_email: string
+          customer_email_sent?: boolean
+          customer_name: string
+          customer_phone: string
+          delivery: string
+          document_token: string
+          excel_row?: never
+          excel_synced?: boolean
+          id: string
+          items: Json
+          order_no: string
+          owner_email_sent?: boolean
+          receipt_email_sent?: boolean
+          status?: string
+          total: number
+          verification_note?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          customer_email?: string
+          customer_email_sent?: boolean
+          customer_name?: string
+          customer_phone?: string
+          delivery?: string
+          document_token?: string
+          excel_row?: never
+          excel_synced?: boolean
+          id?: string
+          items?: Json
+          order_no?: string
+          owner_email_sent?: boolean
+          receipt_email_sent?: boolean
+          status?: string
+          total?: number
+          verification_note?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       product_prices: {
         Row: {
           amount: number

@@ -1,130 +1,42 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { submitOrder } from '../lib/orders.functions';
-import { orderSchema } from '../lib/order-schema';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '../components/ui/button';
 import { AtelierLayout } from '../components/atelier/layout';
-import { collection, formatPrice, pageHead, SIZES } from '../lib/collection';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { pricesQuery } from '../lib/prices-query';
-import { priceTotal } from '../lib/prices';
+import { formatPrice, pageHead } from '../lib/collection';
+import { shopifyProductsQuery, productForPiece } from '../lib/shopify';
+import { useCartStore } from '../stores/cart-store';
+import { submitEft } from '../lib/eft.functions';
+import { eftSchema } from '../lib/eft-schema';
 
 export const Route = createFileRoute('/checkout')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(pricesQuery),
-  validateSearch: (s: Record<string, unknown>) => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
-  head: () => pageHead('Checkout', "Select your shoe, size and delivery, then place your order with E'SHOE ATELIER.", '/checkout'),
-  component: CheckoutPage,
+  loader: ({ context }) => context.queryClient.ensureQueryData(shopifyProductsQuery),
+  validateSearch: (s: Record<string, unknown>): { piece?: string } => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
+  head: () => pageHead('Absa EFT Checkout', 'Place your E\'SHOE ATELIER order by Absa bank transfer with a unique payment reference and invoice.', '/checkout'),
+  component: Checkout,
 });
-
-type Delivery = 'delivery' | 'collection';
-const STEPS = ['Shoe', 'Size', 'Quantity', 'Delivery', 'Your details', 'Review'];
-
-function CheckoutPage() {
-  const { data: prices } = useSuspenseQuery(pricesQuery);
-  const search = Route.useSearch();
-  const [step, setStep] = useState(search.piece ? 2 : 1);
-  const [pieceId, setPieceId] = useState(search.piece ?? collection[0]?.id ?? '');
-  const [size, setSize] = useState('');
-  const [qty, setQty] = useState(1);
-  const [delivery, setDelivery] = useState<Delivery>('delivery');
+function Checkout() {
+  const { data: products } = useSuspenseQuery(shopifyProductsQuery);
+  const { piece } = Route.useSearch(); const bag = useCartStore(s => s.items);
+  const [hydrated, setHydrated] = useState(false); const [selected, setSelected] = useState(''); const [size, setSize] = useState('');
+  const [quantity, setQuantity] = useState(1); const [delivery, setDelivery] = useState<'collection' | 'delivery'>('collection');
   const [contact, setContact] = useState({ name: '', email: '', phone: '', address: '' });
-  const [error, setError] = useState('');
-  const [orderNo, setOrderNo] = useState('');
-  const [pending, setPending] = useState(false);
-  const [submissionId, setSubmissionId] = useState('');
-  const sendOrder = useServerFn(submitOrder);
-
-  const piece = collection.find(p => p.id === pieceId) ?? collection[0];
-  if (!piece) return <AtelierLayout><main id="main"><h1>No shoes available</h1></main></AtelierLayout>;
-  const unitPrice = prices[piece.id];
-  const subtotal = priceTotal(unitPrice, qty);
-
-  function next() {
-    if (step === 2 && !size) return setError('Please choose a size.');
-    if (step === 5) {
-      if (!contact.name.trim() || !/^\S+@\S+\.\S+$/.test(contact.email) || !contact.phone.trim()) return setError('Please enter your name, a valid email and phone number.');
-      if (delivery === 'delivery' && !contact.address.trim()) return setError('Please enter your delivery address.');
-    }
-    setError('');
-    setStep(s => Math.min(STEPS.length, s + 1));
+  const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [eventId, setEventId] = useState('');
+  const [result, setResult] = useState<Extract<Awaited<ReturnType<typeof submitEft>>, { ok: true }>['order'] | null>(null);
+  const send = useServerFn(submitEft);
+  useEffect(() => { setHydrated(true); setSelected(productForPiece(products, piece ?? '')?.id ?? products[0]?.id ?? ''); }, [piece, products]);
+  const product = products.find(p => p.id === selected); const variant = product?.variants.find(v => v.id === size);
+  const items = hydrated && bag.length ? bag.map(i => ({ variantId: i.variantId, quantity: i.quantity })) : variant ? [{ variantId: variant.id, quantity }] : [];
+  const rows = items.map(i => { const p = products.find(p => p.variants.some(v => v.id === i.variantId)); const v = p?.variants.find(v => v.id === i.variantId); return { ...i, title: p?.title ?? 'Unavailable shoe', size: v?.title ?? '', amount: Number(v?.price.amount ?? 0) }; });
+  const total = rows.reduce((sum, i) => sum + i.amount * i.quantity, 0);
+  async function submit(e: React.FormEvent) {
+    e.preventDefault(); if (busy) return; const id = eventId || crypto.randomUUID(); setEventId(id);
+    const parsed = eftSchema.safeParse({ submissionId: id, lines: items, delivery, contact });
+    if (!parsed.success) { setError('Choose your shoe and size, and complete your contact and delivery details. Each shoe is limited to five pairs.'); return; }
+    setBusy(true); setError('');
+    try { const response = await send({ data: parsed.data }); if (response.ok) setResult(response.order); else setError(response.message); }
+    catch { setError('Your order could not be completed. Please try again.'); } finally { setBusy(false); }
   }
-  async function placeOrder() {
-    if (pending) return;
-    const eventId = submissionId || crypto.randomUUID();
-    setSubmissionId(eventId);
-    const parsed = orderSchema.safeParse({ submissionId: eventId, pieceId, size, qty, delivery, contact });
-    if (!parsed.success) { setError('Please check your shoe, size and contact details.'); return; }
-    setPending(true);
-    setError('');
-    try {
-      const result = await sendOrder({ data: parsed.data });
-      if (result.ok) setOrderNo(result.orderNo);
-      else setError(result.message);
-    } catch {
-      setError('Your order could not be sent. Please try again. No payment has been taken.');
-    } finally { setPending(false); }
-  }
-
-  return (
-    <AtelierLayout>
-      <main className="checkout" id="main">
-        <span className="eyebrow">Checkout</span>
-        <h1>{orderNo ? 'Thank you.' : 'Complete your order'}</h1>
-        <div className="checkout-grid">
-          <div>
-            {!orderNo && (
-              <ol className="checkout-steps">
-                {STEPS.map((s, i) => (
-                  <li key={s} className={i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}>
-                    <span className="dot">{i + 1 < step ? <Check size={13} /> : i + 1}</span>{s}
-                  </li>
-                ))}
-              </ol>
-            )}
-            <div className="checkout-card">
-              {orderNo ? (
-                <>
-                  <h2>Order {orderNo} received</h2>
-                  <p>Thank you, {contact.name}. Your order request has been emailed to our team. Your order number is <strong>{orderNo}</strong>. We'll contact you at {contact.email} to confirm pricing, payment and {delivery === 'delivery' ? 'delivery' : 'collection'}. No payment has been taken.</p>
-                  <Link to="/collection" className="piece-select">Continue shopping</Link>
-                </>
-              ) : (
-                <>
-                  {step === 1 && (<><h2>Select your shoe</h2><div className="choice-grid">{collection.map(p => (
-                    <button key={p.id} className="choice" aria-pressed={p.id === pieceId} onClick={() => setPieceId(p.id)}>
-                      <img src={p.images[0]} alt="" />{p.name}<small>{p.colour} · {formatPrice(prices[p.id])}</small>
-                    </button>))}</div></>)}
-                  {step === 2 && (<><h2>Select your size</h2><div className="choice-grid">{SIZES.map(s => (
-                    <button key={s} className="choice" aria-pressed={s === size} onClick={() => setSize(s)}>{s}</button>))}</div></>)}
-                  {step === 3 && (<><h2>Quantity</h2><label className="field">Pairs<input type="number" min={1} max={5} value={qty} onChange={e => setQty(Math.min(5, Math.max(1, Number(e.target.value) || 1)))} /></label></>)}
-                  {step === 4 && (<><h2>Delivery or collection?</h2><div className="choice-grid">{(['delivery', 'collection'] as Delivery[]).map(d => (
-                    <button key={d} className="choice" aria-pressed={d === delivery} onClick={() => setDelivery(d)}>{d === 'delivery' ? 'Courier delivery' : 'Collection'}<small>{d === 'delivery' ? 'Fee confirmed with your order' : 'Arranged after confirmation'}</small></button>))}</div></>)}
-                  {step === 5 && (<><h2>Your details</h2><div className="fields">
-                    <label className="field">Full name<input value={contact.name} onChange={e => setContact({ ...contact, name: e.target.value })} /></label>
-                    <label className="field">Email<input type="email" value={contact.email} onChange={e => setContact({ ...contact, email: e.target.value })} /></label>
-                    <label className="field">Phone<input value={contact.phone} onChange={e => setContact({ ...contact, phone: e.target.value })} /></label>
-                    {delivery === 'delivery' && <label className="field">Delivery address<textarea value={contact.address} onChange={e => setContact({ ...contact, address: e.target.value })} /></label>}
-                  </div></>)}
-                  {step === 6 && (<><h2>Review your order</h2><p>{qty} × {piece.name} ({piece.colour}), {size}, {delivery === 'delivery' ? `delivered to ${contact.address}` : 'for collection'}.</p><p className="text-sm text-muted-foreground">Payment is confirmed with you after you place the order.</p></>)}
-                  {error && <p className="checkout-error" role="alert">{error}</p>}
-                  <div className="checkout-nav">
-                    <Button variant="outline" disabled={step === 1 || pending} onClick={() => { setError(''); setStep(s => s - 1); }}><ArrowLeft /> Back</Button>
-                    {step < STEPS.length ? <Button onClick={next}>Continue <ArrowRight /></Button> : <Button disabled={pending} onClick={placeOrder}>{pending ? 'Sending order…' : 'Place order'} <Check /></Button>}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          <aside className="checkout-summary" aria-label="Order summary">
-            <img src={piece.images[0]} alt={piece.name} />
-            <h2 className="font-editorial text-2xl mt-4 mb-3">{piece.name}</h2>
-            <dl><dt>Colour</dt><dd>{piece.colour}</dd><dt>Size</dt><dd>{size || '—'}</dd><dt>Quantity</dt><dd>{qty}</dd><dt>Unit price</dt><dd>{formatPrice(unitPrice)}</dd><dt>{delivery === 'delivery' ? 'Delivery' : 'Collection'}</dt><dd>To be confirmed</dd></dl>
-            <div className="checkout-total"><span>Total</span><span>{subtotal === undefined ? 'On request' : formatPrice(subtotal)}</span></div>
-          </aside>
-        </div>
-      </main>
-    </AtelierLayout>
-  );
+  return <AtelierLayout><section className="checkout"><span className="eyebrow">ABSA BANK TRANSFER</span><h1>{result ? 'Your EFT order' : 'EFT checkout'}</h1>{result ? <div className="max-w-2xl space-y-5"><h2 className="break-all">{result.orderNo}</h2><p role="status">{result.status === 'paid' ? 'Paid' : 'Awaiting Payment Verification'}</p><p>Goods total: <strong>{formatPrice(result.total)}</strong></p>{delivery === 'delivery' && <p>Courier fees are excluded. Wait for our delivery quote before transferring payment.</p>}<dl className="grid grid-cols-2 gap-3"><dt>Bank</dt><dd>{result.bank.bank}</dd><dt>Account holder</dt><dd>{result.bank.accountHolder}</dd><dt>Account type</dt><dd>{result.bank.accountType}</dd><dt>Account number</dt><dd>{result.bank.accountNumber}</dd><dt>Branch code</dt><dd>{result.bank.branchCode}</dd><dt>SWIFT</dt><dd>{result.bank.swiftCode}</dd></dl><p className="break-all">Payment reference: <strong>{result.orderNo}</strong></p><p>{result.customerSent ? `Payment instructions sent to ${contact.email}.` : 'Your order is saved, but email delivery was not accepted. Download your invoice below.'} {result.ownerSent ? 'Our team has been notified.' : 'Owner email delivery is pending; contact eshoesole@gmail.com.'}</p><p>Only cleared funds checked by our team confirm payment. This request does not reserve stock.</p><div className="flex flex-wrap gap-3"><Button asChild><a href={result.documentUrl} referrerPolicy="no-referrer">Download PDF invoice</a></Button><Button variant="outline" onClick={() => { navigator.clipboard.writeText(result.orderNo).catch(() => setError('Please copy the reference manually.')); }}>Copy reference</Button><Button asChild variant="outline"><Link to="/collection">Continue shopping</Link></Button></div>{error && <p role="alert">{error}</p>}</div> : <form onSubmit={submit} className="checkout-grid"><div className="fields">{(!hydrated || bag.length === 0) && <><label className="field">Shoe<select value={selected} onChange={e => { setSelected(e.target.value); setSize(''); setEventId(''); }}>{products.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label><label className="field">Size<select required value={size} onChange={e => { setSize(e.target.value); setEventId(''); }}><option value="">Choose size</option>{product?.variants.filter(v => v.availableForSale).map(v => <option value={v.id} key={v.id}>{v.title} · {formatPrice(Number(v.price.amount))}</option>)}</select></label><label className="field">Pairs<input type="number" min={1} max={5} value={quantity} onChange={e => { setQuantity(Number(e.target.value)); setEventId(''); }} /></label></>}<label className="field">Delivery<select value={delivery} onChange={e => { setDelivery(e.target.value === 'delivery' ? 'delivery' : 'collection'); setEventId(''); }}><option value="collection">Collection by arrangement</option><option value="delivery">Courier — fee quoted separately</option></select></label>{(['name', 'email', 'phone'] as const).map(key => <label className="field" key={key}>{key === 'name' ? 'Full name' : key === 'email' ? 'Email' : 'Phone'}<input required type={key === 'email' ? 'email' : 'text'} maxLength={key === 'name' ? 100 : key === 'phone' ? 40 : 254} value={contact[key]} onChange={e => { setContact({ ...contact, [key]: e.target.value }); setEventId(''); }} /></label>)}{delivery === 'delivery' && <label className="field">Delivery address<textarea required maxLength={1000} value={contact.address} onChange={e => { setContact({ ...contact, address: e.target.value }); setEventId(''); }} /></label>}<p className="text-sm">Your contact details are used to process this order and arrange fulfilment. Payment remains unconfirmed until cleared funds are independently checked.</p>{error && <p role="alert" className="checkout-error">{error}</p>}<Button disabled={busy || !items.length || total <= 0} type="submit">{busy ? 'Saving your order…' : 'Place EFT order'}</Button></div><aside className="checkout-summary space-y-4"><h2>Order summary</h2>{rows.map(r => <div key={r.variantId}><p>{r.quantity} × {r.title}</p><p>{r.size} · {formatPrice(r.amount * r.quantity)}</p></div>)}<p>Goods total: <strong>{formatPrice(total)}</strong></p><p>{delivery === 'collection' ? 'Collection by arrangement.' : 'Courier fees are excluded and quoted separately. Wait for the quote before paying.'}</p><p>Absa EFT · ZAR</p></aside></form>}</section></AtelierLayout>;
 }

@@ -1,0 +1,4 @@
+import { Html, Head, Preview, Body, Container, Text, Heading } from '@react-email/components';
+import type { TemplateEntry } from './registry';
+function Email({ orderNo = '', name = '', total = '' }: { orderNo?: string; name?: string; total?: string }) { return <Html><Head /><Preview>EFT verified {orderNo}</Preview><Body style={{ backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }}><Container style={{ padding: '32px 24px' }}><Text>E'SHOE ATELIER</Text><Heading>EFT payment verified</Heading><Text>Order: {orderNo}<br />Customer: {name}<br />Goods total: {total}</Text><Text>An authorised administrator has independently confirmed cleared funds. Open Pricing to check receipt delivery and the Excel register status.</Text></Container></Body></Html>; }
+export const template = { component: Email, to: 'eshoesole@gmail.com', subject: d => `EFT payment verified ${d['orderNo']} — E'SHOE ATELIER` } satisfies TemplateEntry;

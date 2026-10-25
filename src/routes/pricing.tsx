@@ -9,6 +9,7 @@ import { lovable } from '../integrations/lovable';
 import { collection, pageHead } from '../lib/collection';
 import { pricesQuery } from '../lib/prices-query';
 import { priceSchema } from '../lib/prices';
+import { EftOrdersPanel } from '../components/atelier/eft-orders-panel';
 
 export const Route = createFileRoute('/pricing')({ head: () => pageHead('Pricing', 'Owner pricing management for the E\'SHOE ATELIER footwear collection.', '/pricing'), loader: ({ context }) => context.queryClient.ensureQueryData(pricesQuery), component: Pricing });
 function Pricing() {
@@ -47,6 +48,7 @@ function Pricing() {
   }
   return <AtelierLayout><section className="pricing-page"><span className="eyebrow">THE ATELIER</span><h1>Pricing</h1>
     {!owner ? <div className="pricing-access">{signedIn ? <><p>This account does not have price-editing access.</p><Button variant="outline" onClick={() => void supabase.auth.signOut()}>Sign out <LogOut size={16} /></Button></> : <><h2>Owner sign-in</h2><form onSubmit={e => { e.preventDefault(); void authenticate(); }} className="fields"><label className="field">Email<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label><label className="field">Password<input required minLength={8} type="password" autoComplete={register ? 'new-password' : 'current-password'} value={password} onChange={e => setPassword(e.target.value)} /></label><Button disabled={busy} type="submit">{busy ? 'Please wait…' : register ? 'Create account' : 'Sign in'}</Button><Button type="button" variant="link" onClick={() => setRegister(!register)}>{register ? 'Already have an account?' : 'Create owner account'}</Button></form><div className="pricing-signin-options"><Button variant="outline" onClick={() => void social('google')}>Continue with Google</Button><Button variant="outline" onClick={() => void social('lovable')}>Continue with Lovable</Button></div></>}</div> : <><div className="pricing-heading"><span>ZAR · South African rand</span><Button variant="ghost" onClick={() => void supabase.auth.signOut()}>Sign out <LogOut size={16} /></Button></div><div className="pricing-list">{collection.map(p => <PriceRow key={p.id} piece={p} price={prices[p.id]} saved={() => client.invalidateQueries({ queryKey: pricesQuery.queryKey })} />)}</div></>}
+    {owner && <EftOrdersPanel />}
     {message && <p role="status">{message}</p>}
   </section></AtelierLayout>;
 }

@@ -14,6 +14,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as StoryRouteImport } from './routes/story'
+import { Route as ApiPublicEftDocumentRouteImport } from './routes/api/public/eft-document'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const StoryRoute = StoryRouteImport.update({
   path: '/story',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEftDocumentRoute = ApiPublicEftDocumentRouteImport.update({
+  id: '/api/public/eft-document',
+  path: '/api/public/eft-document',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
+  '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
+  '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
+  '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/pricing'
     | '/story'
+    | '/api/public/eft-document'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/pricing'
     | '/story'
+    | '/api/public/eft-document'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/pricing'
     | '/story'
+    | '/api/public/eft-document'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   PricingRoute: typeof PricingRoute
   StoryRoute: typeof StoryRoute
+  ApiPublicEftDocumentRoute: typeof ApiPublicEftDocumentRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -146,6 +159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/eft-document': {
+      id: '/api/public/eft-document'
+      path: '/api/public/eft-document'
+      fullPath: '/api/public/eft-document'
+      preLoaderRoute: typeof ApiPublicEftDocumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   PricingRoute: PricingRoute,
   StoryRoute: StoryRoute,
+  ApiPublicEftDocumentRoute: ApiPublicEftDocumentRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport

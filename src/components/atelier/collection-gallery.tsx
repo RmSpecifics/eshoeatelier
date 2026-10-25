@@ -28,8 +28,9 @@ export function CollectionGallery({ filters = false }: { filters?: boolean }) {
   const selectedProduct = selected ? productForPiece(shopProducts, selected.id) : undefined;
   const addToBag = async () => {
     const variant = selectedProduct?.variants.find(v => v.selectedOptions.some(o => o.value === size));
-    if (!selected || !variant) return;
-    const ok = await addItem({ variantId: variant.id, title: selected.name, size, image: selected.images[0], price: variant.price, quantity: 1 });
+    const image = selected?.images[0];
+    if (!selected || !variant || !image) return;
+    const ok = await addItem({ variantId: variant.id, title: selected.name, size, image, price: variant.price, quantity: 1 });
     if (ok) { toast.success('Added to your bag', { description: `${selected.name} · ${size}`, position: 'top-center' }); setSelected(null); }
   };
   const pieces = collection.filter(p => (category === 'All pieces' || p.category === category) && (colour === 'All colours' || p.colour === colour) && `${p.name} ${p.colour} ${p.category}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => sort === 'Name A–Z' ? a.name.localeCompare(b.name) : sort === 'Name Z–A' ? b.name.localeCompare(a.name) : a.id.localeCompare(b.id));
