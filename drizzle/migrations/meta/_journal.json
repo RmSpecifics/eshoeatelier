@@ -8,6 +8,13 @@
       "when": 1792878544659,
       "tag": "0000_owner_catalogue_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792947017148,
+      "tag": "0001_eft_orders",
+      "breakpoints": true
     }
   ]
 }
