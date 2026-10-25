@@ -31,4 +31,4 @@ export function pageHead(title: string, description: string, path: string) {
 }
 // Prices in ZAR: leave undefined until the owner confirms them (shown as "Price on request").
 export const SIZES = ['UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'];
-export const formatPrice = (p?: number) => (p === undefined ? 'Price on request' : `R${p.toLocaleString('en-ZA')}`);
+export const formatPrice = (p?: number) => (p === undefined ? 'Price on request' : `R${p.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
