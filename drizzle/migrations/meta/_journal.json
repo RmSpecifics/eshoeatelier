@@ -15,6 +15,13 @@
       "when": 1792947017148,
       "tag": "0001_eft_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792947156185,
+      "tag": "0002_eft_excel_row",
+      "breakpoints": true
     }
   ]
 }
