@@ -1,4 +1,7 @@
 # E'SHOE ATELIER
+- [ ] Add confidential Absa EFT settings and administrator-only cleared-funds verification. Blocked: the Absa confirmation letter/account fields have not been supplied.
+- [ ] Email customer invoices/receipts directly and copy owner notifications. PDF attachments need a supported sending option; managed app email only supports PDF download links.
+- [ ] Create an Excel order register and record verified paid orders automatically. Microsoft Excel linked; workbook creation and verified paid-order intake remain unimplemented.
 - [x] Replace logo artwork cover with cinematic footwear photography and restrained animation.
 - [x] Add owner-only price text boxes, saved prices and consistent catalogue/checkout totals.
 - [ ] Verify owner price saving end-to-end. Blocked: eshoesole@gmail.com must create and verify its owner account on Pricing first.
