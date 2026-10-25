@@ -1,5 +1,6 @@
 # E'SHOE ATELIER
-- [ ] Add confidential Absa EFT settings and administrator-only cleared-funds verification. Blocked: the Absa confirmation letter/account fields have not been supplied.
+- [x] Receive and privately verify the Absa account confirmation letter; retain only payment fields in encrypted server configuration.
+- [ ] Wire Absa EFT instructions and administrator-only cleared-funds verification into orders; saving bank configuration alone does not enable EFT checkout.
 - [ ] Email customer invoices/receipts directly and copy owner notifications. PDF attachments need a supported sending option; managed app email only supports PDF download links.
 - [ ] Create an Excel order register and record verified paid orders automatically. Microsoft Excel linked; workbook creation and verified paid-order intake remain unimplemented.
 - [x] Replace logo artwork cover with cinematic footwear photography and restrained animation.
@@ -7,7 +8,7 @@
 - [ ] Verify owner price saving end-to-end. Blocked: eshoesole@gmail.com must create and verify its owner account on Pricing first.
 - [x] Undo the uploaded navigation/footer logo and use the latest silver-on-black ATELIER image as the catalogue cover instead.
 - [ ] Add prices to all seven shoes. Blocked: the owner has not supplied price amounts.
-- [ ] Set up the sender domain and connect checkout order notifications; sending verification is blocked until notify.rmspecifics.co.za DNS verification completes.
+- [x] Verify notify.rmspecifics.co.za sending domain and confirm the order-request notification recipient remains eshoesole@gmail.com; recipient tests pass. Live delivery has not been tested.
 - [x] Recreate the captured Berluti shoes page layout with E'SHOE ATELIER branding, black text and no floating shoe. Exact source copying remains unavailable because the source site blocked import; owner photographs retained.
 - [x] Stage 1: Branded homepage, floating sneaker, story/timeline and photographic catalogue; desktop/mobile verification.
 - [ ] Stage 2: Connected shop, product pricing, sizes, wishlist and checkout. Blocked pending confirmed product details and next-stage approval.
