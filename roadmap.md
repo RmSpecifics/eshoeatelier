@@ -1,4 +1,5 @@
 # E'SHOE ATELIER
+- [x] Add standard R150 and express (1–3 days) R250 delivery totals, random short order/payment references, and paid-only owner email notifications.
 - [x] Receive and privately verify the Absa account confirmation letter; retain only payment fields in encrypted server configuration.
 - [x] Wire Absa EFT checkout, stored orders, exact references, confidential bank instructions and administrator-only cleared-funds verification. Unpaid test order and invoice download verified.
 - [x] Email customer EFT instructions and PDF download links, with owner notifications to eshoesole@gmail.com. Receipt delivery is wired after administrator confirmation; no test payment was falsely marked paid.
