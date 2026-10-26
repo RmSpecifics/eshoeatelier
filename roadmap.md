@@ -1,8 +1,9 @@
 # E'SHOE ATELIER
 - [x] Receive and privately verify the Absa account confirmation letter; retain only payment fields in encrypted server configuration.
-- [ ] Wire Absa EFT instructions and administrator-only cleared-funds verification into orders; saving bank configuration alone does not enable EFT checkout.
-- [ ] Email customer invoices/receipts directly and copy owner notifications. PDF attachments need a supported sending option; managed app email only supports PDF download links.
-- [ ] Create an Excel order register and record verified paid orders automatically. Microsoft Excel linked; workbook creation and verified paid-order intake remain unimplemented.
+- [x] Wire Absa EFT checkout, stored orders, exact references, confidential bank instructions and administrator-only cleared-funds verification. Unpaid test order and invoice download verified.
+- [x] Email customer EFT instructions and PDF download links, with owner notifications to eshoesole@gmail.com. Receipt delivery is wired after administrator confirmation; no test payment was falsely marked paid.
+- [x] Create the OneDrive EFT register and wire verified payments to fixed Excel rows with retry controls; register read verified. Paid-order write awaits a genuinely cleared payment and owner verification.
+- [ ] Verify the administrator paid-order flow end-to-end. Blocked: owner session and a genuinely cleared EFT payment are required; the available test session has no admin role.
 - [x] Replace logo artwork cover with cinematic footwear photography and restrained animation.
 - [x] Add owner-only price text boxes, saved prices and consistent catalogue/checkout totals.
 - [ ] Verify owner price saving end-to-end. Blocked: eshoesole@gmail.com must create and verify its owner account on Pricing first.
