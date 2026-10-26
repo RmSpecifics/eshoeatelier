@@ -39,7 +39,7 @@ export function CartDrawer() {
             <div className="flex items-center gap-1"><Button variant="outline" size="icon" className="h-7 w-7" aria-label="Decrease quantity" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}><Minus size={12} /></Button><span className="w-7 text-center text-sm">{item.quantity}</span><Button variant="outline" size="icon" className="h-7 w-7" aria-label="Increase quantity" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}><Plus size={12} /></Button></div>
           </div>
         </div>)}</div>
-        <div className="border-t pt-4 space-y-4"><div className="flex justify-between items-baseline"><span className="eyebrow">Total</span><span className="product-price">{rand(total)}</span></div><p className="text-xs text-muted-foreground">EFT courier fees are quoted separately.</p><Button asChild variant="outline" className="w-full" disabled={isLoading || isSyncing}><Link to="/checkout" onClick={() => setOpen(false)}>Pay by Absa EFT</Link></Button></div>
+        <div className="border-t pt-4 space-y-4"><div className="flex justify-between items-baseline"><span className="eyebrow">Total</span><span className="product-price">{rand(total)}</span></div><p className="text-xs text-muted-foreground">Standard delivery R150 · Express (1–3 days) R250.</p><Button asChild variant="outline" className="w-full" disabled={isLoading || isSyncing}><Link to="/checkout" onClick={() => setOpen(false)}>Pay by Absa EFT</Link></Button></div>
       </>}
     </SheetContent>
   </Sheet>;
