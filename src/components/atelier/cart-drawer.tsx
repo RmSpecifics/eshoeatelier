@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from 'lucide-react';
+import { ShoppingBag, Minus, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '../../stores/cart-store';
@@ -20,12 +20,11 @@ export function useCartSync() {
 export function CartDrawer() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, checkoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } = useCartStore();
   useEffect(() => setMounted(true), []);
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
   const count = mounted ? items.reduce((s, i) => s + i.quantity, 0) : 0;
   const total = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
-  const checkout = () => { if (checkoutUrl) { window.open(checkoutUrl, '_blank'); setOpen(false); } };
 
   return <Sheet open={open} onOpenChange={setOpen}>
     <SheetTrigger asChild><Button variant="ghost" size="icon" className="cart-trigger" aria-label={`Shopping bag, ${count} items`}><ShoppingBag />{count > 0 && <span className="cart-count">{count}</span>}</Button></SheetTrigger>
@@ -40,7 +39,7 @@ export function CartDrawer() {
             <div className="flex items-center gap-1"><Button variant="outline" size="icon" className="h-7 w-7" aria-label="Decrease quantity" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}><Minus size={12} /></Button><span className="w-7 text-center text-sm">{item.quantity}</span><Button variant="outline" size="icon" className="h-7 w-7" aria-label="Increase quantity" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}><Plus size={12} /></Button></div>
           </div>
         </div>)}</div>
-        <div className="border-t pt-4 space-y-4"><div className="flex justify-between items-baseline"><span className="eyebrow">Total</span><span className="product-price">{rand(total)}</span></div><p className="text-xs text-muted-foreground">Delivery and taxes are calculated at card checkout. EFT courier fees are quoted separately.</p><Button className="piece-select w-full" size="lg" onClick={checkout} disabled={isLoading || isSyncing || !checkoutUrl}>{isLoading || isSyncing ? <Loader2 className="animate-spin" /> : 'Pay securely'}</Button><Button asChild variant="outline" className="w-full" disabled={isLoading || isSyncing}><Link to="/checkout" onClick={() => setOpen(false)}>Pay by Absa EFT</Link></Button></div>
+        <div className="border-t pt-4 space-y-4"><div className="flex justify-between items-baseline"><span className="eyebrow">Total</span><span className="product-price">{rand(total)}</span></div><p className="text-xs text-muted-foreground">EFT courier fees are quoted separately.</p><Button asChild variant="outline" className="w-full" disabled={isLoading || isSyncing}><Link to="/checkout" onClick={() => setOpen(false)}>Pay by Absa EFT</Link></Button></div>
       </>}
     </SheetContent>
   </Sheet>;
