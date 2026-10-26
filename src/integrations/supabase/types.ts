@@ -23,6 +23,8 @@ export type Database = {
           customer_name: string
           customer_phone: string
           delivery: string
+          delivery_fee: number
+          delivery_service: string
           document_token: string
           excel_row: number
           excel_synced: boolean
@@ -45,6 +47,8 @@ export type Database = {
           customer_name: string
           customer_phone: string
           delivery: string
+          delivery_fee?: number
+          delivery_service?: string
           document_token: string
           excel_row?: never
           excel_synced?: boolean
@@ -67,6 +71,8 @@ export type Database = {
           customer_name?: string
           customer_phone?: string
           delivery?: string
+          delivery_fee?: number
+          delivery_service?: string
           document_token?: string
           excel_row?: never
           excel_synced?: boolean
