@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { fetchShopifyProducts } from './shopify';
-import { eftSchema, resolveEftLines, type EftInput, type EftLine } from './eft-schema';
+import { eftSchema, resolveEftLines, deliveryFee, randomOrderNumber, type EftInput, type EftLine } from './eft-schema';
 import { sendTemplateEmail } from './email-templates/send-email';
 import { createEftPdf } from './eft-pdf';
 import type { Database } from '../integrations/supabase/types';
@@ -12,7 +12,7 @@ export function getBank() {
 const origin = 'https://rmspecifics.co.za';
 export const documentPath = (o: EftOrder) => `/api/public/eft-document?id=${o.id}&token=${o.document_token}`;
 async function sendCustomer(o: EftOrder, paid: boolean) {
-  return sendTemplateEmail('eft-instructions', o.customer_email, { idempotencyKey: `eft-${paid ? 'receipt' : 'instructions'}-${o.id}`, templateData: { orderNo: o.order_no, name: o.customer_name, total: `R${Number(o.total).toFixed(2)}`, lines: o.items, bank: paid ? undefined : getBank(), documentUrl: `${origin}${documentPath(o)}`, paid, courier: o.delivery === 'delivery' } });
+  return sendTemplateEmail('eft-instructions', o.customer_email, { idempotencyKey: `eft-${paid ? 'receipt' : 'instructions'}-${o.id}`, templateData: { orderNo: o.order_no, name: o.customer_name, total: `R${Number(o.total).toFixed(2)}`, lines: o.items, bank: paid ? undefined : getBank(), documentUrl: `${origin}${documentPath(o)}`, paid, deliveryFee: Number(o.delivery_fee), deliveryLabel: o.delivery === 'collection' ? 'Collection' : o.delivery_service === 'express' ? 'Express delivery (1–3 days)' : 'Standard delivery' } });
 }
 export async function placeEftOrder(input: EftInput) {
   const data = eftSchema.parse(input); const bank = getBank();
@@ -20,21 +20,20 @@ export async function placeEftOrder(input: EftInput) {
   const existing = await db.from('eft_orders').select('*').eq('id', data.submissionId).maybeSingle();
   if (existing.error) throw existing.error;
   let order = existing.data;
-  if (order && (order.customer_email !== data.contact.email || order.customer_name !== data.contact.name || order.customer_phone !== data.contact.phone || order.delivery !== data.delivery || order.address !== data.contact.address || JSON.stringify((order.items as EftLine[]).map(l => ({ variantId: l.variantId, quantity: l.quantity }))) !== JSON.stringify(data.lines))) throw new Error('Use a new submission for changed details.');
+  if (order && (order.customer_email !== data.contact.email || order.customer_name !== data.contact.name || order.customer_phone !== data.contact.phone || order.delivery !== data.delivery || order.delivery_service !== data.deliveryService || order.address !== data.contact.address || JSON.stringify((order.items as EftLine[]).map(l => ({ variantId: l.variantId, quantity: l.quantity }))) !== JSON.stringify(data.lines))) throw new Error('Use a new submission for changed details.');
   if (!order) {
     const items = resolveEftLines(data.lines, await fetchShopifyProducts());
-    const inserted = await db.from('eft_orders').insert({ id: data.submissionId, order_no: `ESA-${data.submissionId.toUpperCase()}`, document_token: crypto.randomUUID()+crypto.randomUUID(), customer_name: data.contact.name, customer_email: data.contact.email, customer_phone: data.contact.phone, address: data.contact.address, delivery: data.delivery, items, total: items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0) }).select('*').single();
+    const fee = deliveryFee(data.delivery, data.deliveryService);
+    const inserted = await db.from('eft_orders').insert({ id: data.submissionId, order_no: randomOrderNumber(), document_token: crypto.randomUUID()+crypto.randomUUID(), customer_name: data.contact.name, customer_email: data.contact.email, customer_phone: data.contact.phone, address: data.contact.address, delivery: data.delivery, delivery_service: data.deliveryService, delivery_fee: fee, items, total: items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0) + fee }).select('*').single();
     if (inserted.error?.code === '23505') return placeEftOrder(input);
     if (inserted.error || !inserted.data) throw inserted.error ?? new Error('Order could not be saved.');
     order = inserted.data;
   }
   let customerSent = order.customer_email_sent;
-  let ownerSent = order.owner_email_sent;
   if (!customerSent) { try { customerSent = (await sendCustomer(order, false)).sent; } catch { console.error('EFT instruction delivery failed'); } }
-  if (!ownerSent) { try { ownerSent = (await sendTemplateEmail('order-confirmation', 'eshoesole@gmail.com', { idempotencyKey: `eft-owner-${order.id}`, replyTo: order.customer_email, templateData: { orderNo: order.order_no, name: order.customer_name, email: order.customer_email, phone: order.customer_phone, address: order.address, pieceName: (order.items as EftLine[]).map(l => `${l.quantity} x ${l.title} (${l.size})`).join('; '), size: 'See item details', quantity: 1, total: `R${Number(order.total).toFixed(2)}`, delivery: order.delivery } })).sent; } catch { console.error('EFT owner delivery failed'); } }
-  const update = await db.from('eft_orders').update({ ...(customerSent ? { customer_email_sent: true } : {}), ...(ownerSent ? { owner_email_sent: true } : {}) }).eq('id', order.id);
+  const update = await db.from('eft_orders').update({ ...(customerSent ? { customer_email_sent: true } : {}) }).eq('id', order.id);
   if (update.error) throw update.error;
-  return { orderNo: order.order_no, total: Number(order.total), bank, documentUrl: documentPath(order), customerSent, ownerSent, status: order.status };
+  return { orderNo: order.order_no, total: Number(order.total), deliveryFee: Number(order.delivery_fee), bank, documentUrl: documentPath(order), customerSent, status: order.status };
 }
 export async function paymentDocument(id: string, token: string) {
   const { supabaseAdmin: db } = await import('../integrations/supabase/client.server');
