@@ -12,7 +12,7 @@ import { eftSchema } from '../lib/eft-schema';
 
 export const Route = createFileRoute('/checkout')({
   loader: ({ context }) => context.queryClient.ensureQueryData(shopifyProductsQuery),
-  validateSearch: (s: Record<string, unknown>): { piece?: string } => ({ piece: typeof s['piece'] === 'string' ? s['piece'] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { piece?: string } => typeof s['piece'] === 'string' ? { piece: s['piece'] } : {},
   head: () => pageHead('Absa EFT Checkout', 'Place your E\'SHOE ATELIER order by Absa bank transfer with a unique payment reference and invoice.', '/checkout'),
   component: Checkout,
 });
@@ -28,6 +28,8 @@ function Checkout() {
   useEffect(() => { setHydrated(true); setSelected(productForPiece(products, piece ?? '')?.id ?? products[0]?.id ?? ''); }, [piece, products]);
   const product = products.find(p => p.id === selected); const variant = product?.variants.find(v => v.id === size);
   const items = hydrated && bag.length ? bag.map(i => ({ variantId: i.variantId, quantity: i.quantity })) : variant ? [{ variantId: variant.id, quantity }] : [];
+  const selectionKey = JSON.stringify(items);
+  useEffect(() => setEventId(''), [selectionKey]);
   const rows = items.map(i => { const p = products.find(p => p.variants.some(v => v.id === i.variantId)); const v = p?.variants.find(v => v.id === i.variantId); return { ...i, title: p?.title ?? 'Unavailable shoe', size: v?.title ?? '', amount: Number(v?.price.amount ?? 0) }; });
   const total = rows.reduce((sum, i) => sum + i.amount * i.quantity, 0);
   async function submit(e: React.FormEvent) {

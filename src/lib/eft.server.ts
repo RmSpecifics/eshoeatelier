@@ -24,6 +24,7 @@ export async function placeEftOrder(input: EftInput) {
   if (!order) {
     const items = resolveEftLines(data.lines, await fetchShopifyProducts());
     const inserted = await db.from('eft_orders').insert({ id: data.submissionId, order_no: `ESA-${data.submissionId.toUpperCase()}`, document_token: crypto.randomUUID()+crypto.randomUUID(), customer_name: data.contact.name, customer_email: data.contact.email, customer_phone: data.contact.phone, address: data.contact.address, delivery: data.delivery, items, total: items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0) }).select('*').single();
+    if (inserted.error?.code === '23505') return placeEftOrder(input);
     if (inserted.error || !inserted.data) throw inserted.error ?? new Error('Order could not be saved.');
     order = inserted.data;
   }
@@ -31,7 +32,7 @@ export async function placeEftOrder(input: EftInput) {
   let ownerSent = order.owner_email_sent;
   if (!customerSent) { try { customerSent = (await sendCustomer(order, false)).sent; } catch { console.error('EFT instruction delivery failed'); } }
   if (!ownerSent) { try { ownerSent = (await sendTemplateEmail('order-confirmation', 'eshoesole@gmail.com', { idempotencyKey: `eft-owner-${order.id}`, replyTo: order.customer_email, templateData: { orderNo: order.order_no, name: order.customer_name, email: order.customer_email, phone: order.customer_phone, address: order.address, pieceName: (order.items as EftLine[]).map(l => `${l.quantity} x ${l.title} (${l.size})`).join('; '), size: 'See item details', quantity: 1, total: `R${Number(order.total).toFixed(2)}`, delivery: order.delivery } })).sent; } catch { console.error('EFT owner delivery failed'); } }
-  const update = await db.from('eft_orders').update({ customer_email_sent: customerSent, owner_email_sent: ownerSent }).eq('id', order.id);
+  const update = await db.from('eft_orders').update({ ...(customerSent ? { customer_email_sent: true } : {}), ...(ownerSent ? { owner_email_sent: true } : {}) }).eq('id', order.id);
   if (update.error) throw update.error;
   return { orderNo: order.order_no, total: Number(order.total), bank, documentUrl: documentPath(order), customerSent, ownerSent, status: order.status };
 }
@@ -52,7 +53,7 @@ export async function verifyEft(id: string, userId: string, note: string) {
   let synced = order.excel_synced;
   if (!synced) { try { await syncExcel(order); synced = true; } catch { console.error('EFT Excel update failed'); } }
   if (order.status === 'paid') { try { await sendTemplateEmail('eft-owner-paid', 'eshoesole@gmail.com', { idempotencyKey: `eft-owner-paid-${order.id}`, templateData: { orderNo: order.order_no, name: order.customer_name, total: `R${Number(order.total).toFixed(2)}` } }); } catch { console.error('Owner payment notification failed'); } }
-  const updated = await db.from('eft_orders').update({ receipt_email_sent: sent, excel_synced: synced }).eq('id', id);
+  const updated = await db.from('eft_orders').update({ ...(sent ? { receipt_email_sent: true } : {}), ...(synced ? { excel_synced: true } : {}) }).eq('id', id);
   if (updated.error) throw updated.error;
   return { paid: true, receiptSent: sent, excelSynced: synced };
 }
