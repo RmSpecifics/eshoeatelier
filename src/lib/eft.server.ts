@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { fetchShopifyProducts } from './shopify';
-import { eftSchema, resolveEftLines, deliveryFee, randomOrderNumber, type EftInput, type EftLine } from './eft-schema';
+import { proofSchema, type ProofInput, eftSchema, resolveEftLines, deliveryFee, randomOrderNumber, type EftInput, type EftLine } from './eft-schema';
 import { sendTemplateEmail } from './email-templates/send-email';
 import { createEftPdf } from './eft-pdf';
 import type { Database } from '../integrations/supabase/types';
@@ -12,7 +12,7 @@ export function getBank() {
 const origin = 'https://rmspecifics.co.za';
 export const documentPath = (o: EftOrder) => `/api/public/eft-document?id=${o.id}&token=${o.document_token}`;
 async function sendCustomer(o: EftOrder, paid: boolean) {
-  return sendTemplateEmail('eft-instructions', o.customer_email, { idempotencyKey: `eft-${paid ? 'receipt' : 'instructions'}-${o.id}`, templateData: { orderNo: o.order_no, name: o.customer_name, total: `R${Number(o.total).toFixed(2)}`, lines: o.items, bank: paid ? undefined : getBank(), documentUrl: `${origin}${documentPath(o)}`, paid, deliveryFee: Number(o.delivery_fee), deliveryLabel: o.delivery === 'collection' ? 'Collection' : o.delivery_service === 'express' ? 'Express delivery (1–3 days)' : 'Standard delivery' } });
+  return sendTemplateEmail('eft-instructions', o.customer_email, { idempotencyKey: `eft-${paid ? 'receipt' : 'instructions'}-${o.id}`, templateData: { orderNo: o.order_no, name: o.customer_name, total: `R${Number(o.total).toFixed(2)}`, lines: o.items, bank: paid ? undefined : getBank(), documentUrl: `${origin}${documentPath(o)}`, proofUrl: `${origin}/payment-proof?id=${o.id}&token=${o.document_token}`, paid, deliveryFee: Number(o.delivery_fee), deliveryLabel: o.delivery === 'collection' ? 'Collection' : o.delivery_service === 'express' ? 'Express delivery (1–3 days)' : 'Standard delivery' } });
 }
 export async function placeEftOrder(input: EftInput) {
   const data = eftSchema.parse(input); const bank = getBank();
@@ -33,7 +33,7 @@ export async function placeEftOrder(input: EftInput) {
   if (!customerSent) { try { customerSent = (await sendCustomer(order, false)).sent; } catch { console.error('EFT instruction delivery failed'); } }
   const update = await db.from('eft_orders').update({ ...(customerSent ? { customer_email_sent: true } : {}) }).eq('id', order.id);
   if (update.error) throw update.error;
-  return { orderNo: order.order_no, total: Number(order.total), deliveryFee: Number(order.delivery_fee), bank, documentUrl: documentPath(order), customerSent, status: order.status };
+  return { orderNo: order.order_no, total: Number(order.total), deliveryFee: Number(order.delivery_fee), bank, documentUrl: documentPath(order), customerSent, status: order.status, id: order.id, token: order.document_token };
 }
 export async function paymentDocument(id: string, token: string) {
   const { supabaseAdmin: db } = await import('../integrations/supabase/client.server');
@@ -43,15 +43,16 @@ export async function paymentDocument(id: string, token: string) {
 }
 export async function verifyEft(id: string, userId: string, note: string) {
   const { supabaseAdmin: db } = await import('../integrations/supabase/client.server');
-  const changed = await db.from('eft_orders').update({ status: 'paid', verified_by: userId, verified_at: new Date().toISOString(), verification_note: note }).eq('id', id).eq('status', 'awaiting_verification');
+  const changed = await db.from('eft_orders').update({ status: 'paid', verified_by: userId, verified_at: new Date().toISOString(), verification_note: note }).eq('id', id).in('status', ['awaiting_verification', 'verification_required']);
   if (changed.error) throw changed.error;
   const { data: order, error } = await db.from('eft_orders').select('*').eq('id', id).single();
   if (error || !order) throw error ?? new Error('Order not found.');
+  if (order.status !== 'paid') throw new Error('Only unpaid orders awaiting payment can be marked paid.');
   let sent = order.receipt_email_sent;
   if (!sent) { try { sent = (await sendCustomer(order, true)).sent; } catch { console.error('EFT receipt delivery failed'); } }
   let synced = order.excel_synced;
   if (!synced) { try { await syncExcel(order); synced = true; } catch { console.error('EFT Excel update failed'); } }
-  if (order.status === 'paid') { try { await sendTemplateEmail('eft-owner-paid', 'eshoesole@gmail.com', { idempotencyKey: `eft-owner-paid-${order.id}`, templateData: { orderNo: order.order_no, name: order.customer_name, total: `R${Number(order.total).toFixed(2)}` } }); } catch { console.error('Owner payment notification failed'); } }
+  // No business email on verification: the owner already received one notification when proof was submitted.
   const updated = await db.from('eft_orders').update({ ...(sent ? { receipt_email_sent: true } : {}), ...(synced ? { excel_synced: true } : {}) }).eq('id', id);
   if (updated.error) throw updated.error;
   return { paid: true, receiptSent: sent, excelSynced: synced };
@@ -65,3 +66,55 @@ async function syncExcel(order: EftOrder) {
   if (!response.ok) { console.error('Excel update status', response.status, await response.text()); throw new Error('Excel update rejected'); }
 }
 function excelText(value: string) { return /^[=+\-@]/.test(value) ? `'${value}` : value; }
+const money = (n: number) => `R${n.toFixed(2)}`;
+function orderSummary(o: EftOrder) {
+  return { orderNo: o.order_no, name: o.customer_name, email: o.customer_email, phone: o.customer_phone, address: o.delivery === 'collection' ? 'Collection by arrangement' : o.address, lines: (o.items as EftLine[]).map(l => ({ title: l.title, size: l.size, quantity: l.quantity, unitPrice: money(l.unitPrice), lineTotal: money(l.unitPrice * l.quantity) })), total: money(Number(o.total)), reference: o.proof_reference ?? o.order_no, proofAmount: o.proof_amount == null ? '' : money(Number(o.proof_amount)) };
+}
+function decodeBase64(b64: string) { const bin = atob(b64); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; }
+export async function submitPaymentProof(input: ProofInput) {
+  const data = proofSchema.parse(input);
+  const { supabaseAdmin: db } = await import('../integrations/supabase/client.server');
+  const found = await db.from('eft_orders').select('*').eq('id', data.id).eq('document_token', data.token).maybeSingle();
+  if (found.error || !found.data) throw new Error('Order not found.');
+  let order = found.data;
+  if (order.status === 'cancelled') throw new Error('This order was cancelled.');
+  if (order.status === 'awaiting_verification') {
+    const bytes = decodeBase64(data.fileBase64);
+    if (bytes.length > 8 * 1024 * 1024) throw new Error('File too large.');
+    const ext = data.contentType === 'application/pdf' ? 'pdf' : data.contentType.split('/')[1];
+    const path = `${order.id}/${crypto.randomUUID()}.${ext}`;
+    const up = await db.storage.from('payment-proofs').upload(path, bytes, { contentType: data.contentType, upsert: false });
+    if (up.error) throw up.error;
+    const changed = await db.from('eft_orders').update({ status: 'verification_required', proof_path: path, proof_reference: data.reference, proof_amount: data.amount, proof_submitted_at: new Date().toISOString() }).eq('id', order.id).eq('status', 'awaiting_verification').select('*').maybeSingle();
+    if (changed.error) throw changed.error;
+    if (changed.data) order = changed.data; else { await db.storage.from('payment-proofs').remove([path]); const again = await db.from('eft_orders').select('*').eq('id', order.id).single(); if (again.data) order = again.data; }
+  }
+  const summary = orderSummary(order);
+  let ownerSent = order.proof_owner_email_sent; let ackSent = order.proof_ack_sent;
+  if (order.proof_path && !ownerSent) { try { ownerSent = (await sendTemplateEmail('eft-proof-owner', 'eshoesole@gmail.com', { idempotencyKey: `eft-proof-owner-${order.id}`, replyTo: order.customer_email, templateData: { ...summary, reviewUrl: `${origin}/pricing` } })).sent; } catch { console.error('Owner proof notification failed'); } }
+  if (order.proof_path && !ackSent) { try { ackSent = (await sendTemplateEmail('eft-proof-ack', order.customer_email, { idempotencyKey: `eft-proof-ack-${order.id}`, templateData: summary })).sent; } catch { console.error('Proof acknowledgement failed'); } }
+  await db.from('eft_orders').update({ ...(ownerSent ? { proof_owner_email_sent: true } : {}), ...(ackSent ? { proof_ack_sent: true } : {}) }).eq('id', order.id);
+  return { status: order.status, acknowledged: ackSent };
+}
+export async function orderAction(id: string, action: 'dispatch' | 'cancel' | 'proof') {
+  const { supabaseAdmin: db } = await import('../integrations/supabase/client.server');
+  const { data: order, error } = await db.from('eft_orders').select('*').eq('id', id).single();
+  if (error || !order) throw new Error('Order not found.');
+  if (action === 'proof') {
+    if (!order.proof_path) throw new Error('No proof submitted.');
+    const signed = await db.storage.from('payment-proofs').createSignedUrl(order.proof_path, 300);
+    if (signed.error) throw signed.error;
+    return { url: signed.data.signedUrl };
+  }
+  if (action === 'cancel') {
+    if (order.status === 'paid' || order.status === 'dispatched') throw new Error('Paid orders cannot be cancelled here.');
+    await db.from('eft_orders').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', id).in('status', ['awaiting_verification', 'verification_required']);
+    return { ok: true };
+  }
+  if (order.status !== 'paid' && order.status !== 'dispatched') throw new Error('Only paid orders can be dispatched.');
+  if (order.status === 'paid') await db.from('eft_orders').update({ status: 'dispatched', dispatched_at: new Date().toISOString() }).eq('id', id).eq('status', 'paid');
+  let sent = order.dispatch_email_sent;
+  if (!sent) { try { sent = (await sendTemplateEmail('eft-dispatched', order.customer_email, { idempotencyKey: `eft-dispatched-${order.id}`, templateData: orderSummary(order) })).sent; } catch { console.error('Dispatch email failed'); } }
+  if (sent) await db.from('eft_orders').update({ dispatch_email_sent: true }).eq('id', id);
+  return { ok: true, dispatchSent: sent };
+}

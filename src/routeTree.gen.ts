@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as PaymentProofRouteImport } from './routes/payment-proof'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as ApiPublicEftDocumentRouteImport } from './routes/api/public/eft-document'
@@ -30,6 +31,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const CollectionRoute = CollectionRouteImport.update({
   id: '/collection',
   path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentProofRoute = PaymentProofRouteImport.update({
+  id: '/payment-proof',
+  path: '/payment-proof',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/collection': typeof CollectionRoute
+  '/payment-proof': typeof PaymentProofRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
   '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/collection': typeof CollectionRoute
+  '/payment-proof': typeof PaymentProofRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
   '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/collection': typeof CollectionRoute
+  '/payment-proof': typeof PaymentProofRoute
   '/pricing': typeof PricingRoute
   '/story': typeof StoryRoute
   '/api/public/eft-document': typeof ApiPublicEftDocumentRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/collection'
+    | '/payment-proof'
     | '/pricing'
     | '/story'
     | '/api/public/eft-document'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/collection'
+    | '/payment-proof'
     | '/pricing'
     | '/story'
     | '/api/public/eft-document'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/collection'
+    | '/payment-proof'
     | '/pricing'
     | '/story'
     | '/api/public/eft-document'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
   CollectionRoute: typeof CollectionRoute
+  PaymentProofRoute: typeof PaymentProofRoute
   PricingRoute: typeof PricingRoute
   StoryRoute: typeof StoryRoute
   ApiPublicEftDocumentRoute: typeof ApiPublicEftDocumentRoute
@@ -143,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/collection'
       fullPath: '/collection'
       preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-proof': {
+      id: '/payment-proof'
+      path: '/payment-proof'
+      fullPath: '/payment-proof'
+      preLoaderRoute: typeof PaymentProofRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
   CollectionRoute: CollectionRoute,
+  PaymentProofRoute: PaymentProofRoute,
   PricingRoute: PricingRoute,
   StoryRoute: StoryRoute,
   ApiPublicEftDocumentRoute: ApiPublicEftDocumentRoute,

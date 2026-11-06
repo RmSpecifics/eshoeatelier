@@ -17,6 +17,7 @@ export type Database = {
       eft_orders: {
         Row: {
           address: string
+          cancelled_at: string | null
           created_at: string
           customer_email: string
           customer_email_sent: boolean
@@ -25,6 +26,8 @@ export type Database = {
           delivery: string
           delivery_fee: number
           delivery_service: string
+          dispatch_email_sent: boolean
+          dispatched_at: string | null
           document_token: string
           excel_row: number
           excel_synced: boolean
@@ -32,6 +35,12 @@ export type Database = {
           items: Json
           order_no: string
           owner_email_sent: boolean
+          proof_ack_sent: boolean
+          proof_amount: number | null
+          proof_owner_email_sent: boolean
+          proof_path: string | null
+          proof_reference: string | null
+          proof_submitted_at: string | null
           receipt_email_sent: boolean
           status: string
           total: number
@@ -41,6 +50,7 @@ export type Database = {
         }
         Insert: {
           address?: string
+          cancelled_at?: string | null
           created_at?: string
           customer_email: string
           customer_email_sent?: boolean
@@ -49,6 +59,8 @@ export type Database = {
           delivery: string
           delivery_fee?: number
           delivery_service?: string
+          dispatch_email_sent?: boolean
+          dispatched_at?: string | null
           document_token: string
           excel_row?: never
           excel_synced?: boolean
@@ -56,6 +68,12 @@ export type Database = {
           items: Json
           order_no: string
           owner_email_sent?: boolean
+          proof_ack_sent?: boolean
+          proof_amount?: number | null
+          proof_owner_email_sent?: boolean
+          proof_path?: string | null
+          proof_reference?: string | null
+          proof_submitted_at?: string | null
           receipt_email_sent?: boolean
           status?: string
           total: number
@@ -65,6 +83,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          cancelled_at?: string | null
           created_at?: string
           customer_email?: string
           customer_email_sent?: boolean
@@ -73,6 +92,8 @@ export type Database = {
           delivery?: string
           delivery_fee?: number
           delivery_service?: string
+          dispatch_email_sent?: boolean
+          dispatched_at?: string | null
           document_token?: string
           excel_row?: never
           excel_synced?: boolean
@@ -80,6 +101,12 @@ export type Database = {
           items?: Json
           order_no?: string
           owner_email_sent?: boolean
+          proof_ack_sent?: boolean
+          proof_amount?: number | null
+          proof_owner_email_sent?: boolean
+          proof_path?: string | null
+          proof_reference?: string | null
+          proof_submitted_at?: string | null
           receipt_email_sent?: boolean
           status?: string
           total?: number
