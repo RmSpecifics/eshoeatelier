@@ -9,7 +9,18 @@ export const eftSchema = z.object({
 }).strict().refine(d => d.delivery !== 'delivery' || d.contact.address.length > 0, 'Enter a delivery address.');
 export type EftInput = z.infer<typeof eftSchema>;
 export type EftLine = { variantId: string; title: string; size: string; quantity: number; unitPrice: number };
-export function deliveryFee(delivery: 'collection' | 'delivery', service: 'standard' | 'express') { return delivery === 'collection' ? 0 : service === 'express' ? 250 : 150; }
+// Delivery is included in the owner-entered shoe prices; no separate fee is ever added.
+export function deliveryFee(_delivery: 'collection' | 'delivery', _service: 'standard' | 'express' = 'standard') { return 0; }
+export const PROOF_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'] as const;
+export const proofSchema = z.object({
+  id: z.string().uuid(), token: z.string().regex(/^[a-f0-9-]{72}$/),
+  reference: z.string().trim().min(2).max(60), amount: z.number().positive().max(1_000_000),
+  fileName: z.string().trim().min(1).max(150), contentType: z.enum(PROOF_TYPES),
+  fileBase64: z.string().min(10).max(11_200_000),
+}).strict();
+export type ProofInput = z.infer<typeof proofSchema>;
+export const orderActionSchema = z.object({ id: z.string().uuid(), action: z.enum(['dispatch', 'cancel', 'proof']) }).strict();
+export const STATUS_LABELS: Record<string, string> = { awaiting_verification: 'Unpaid · payment pending', verification_required: 'Payment verification required', paid: 'Paid', dispatched: 'Dispatched', cancelled: 'Cancelled' };
 export function randomOrderNumber() {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const bytes = crypto.getRandomValues(new Uint8Array(8));
