@@ -4,8 +4,8 @@ import { eftSchema, resolveEftLines, verificationSchema, deliveryFee, randomOrde
 const variantId = 'gid://shopify/ProductVariant/123';
 const input = { submissionId: '01234567-89ab-4cde-8fab-0123456789ab', lines: [{ variantId, quantity: 2 }], delivery: 'collection', contact: { name: 'Customer', email: 'customer@example.com', phone: '0123456789', address: '' } };
 describe('Absa EFT payment rules', () => {
-  it('charges R150 standard delivery per order', () => { expect(deliveryFee('delivery', 'standard')).toBe(150); });
-  it('charges R250 for express delivery', () => { expect(deliveryFee('delivery', 'express')).toBe(250); });
+  it('adds no automatic delivery charge (owner includes it in prices)', () => { expect(deliveryFee('delivery', 'standard')).toBe(0); });
+  it('adds no express delivery charge either', () => { expect(deliveryFee('delivery', 'express')).toBe(0); });
   it('keeps collection free', () => { expect(deliveryFee('collection', 'express')).toBe(0); });
   it('generates short random order references instead of submission UUIDs', () => { const first = randomOrderNumber(); expect(first).toMatch(/^ES-[A-HJ-NP-Z2-9]{8}$/); expect(randomOrderNumber()).not.toBe(first); });
   it('does not accept proof alone as cleared-funds verification', () => {
