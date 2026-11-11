@@ -2,7 +2,7 @@
 
 # North star
 
-Shoppers get the designer shoes they wanted, on their feet.
+Only once-off payments, no monthly payments
 
 ## Metric
 
