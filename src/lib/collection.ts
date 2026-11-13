@@ -18,7 +18,7 @@ import muleBeigePair from '@/assets/adidas-mule-beige-pair.png.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
-  { id: '01', name: 'Chritian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
+  { id: '01', name: 'Christian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'Mens Diesel Slides', price: 1560, category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
   { id: '03', name: 'Mens Diesel Slides', price: 1560, category: 'Slides', colour: 'Black', images: [slide.url, slidePair.url] },
   { id: '04', name: 'Nike Vomero Roam', price: 1750, category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url] },
