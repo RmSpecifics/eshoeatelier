@@ -10,7 +10,8 @@
 - [ ] Add Timberland 6 Inch Premium Waterproof Lace-Up Boots (R2 600,00) and Asics Gel-Kayano (R1 800,00) to the catalogue and the payment system. Blocked: the Shopify store token expired, so the shoes cannot be added for ordering until the store is reconnected.
 - [ ] Add APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs to the catalogue and the payment system. Price shows "Price on request" as the owner chose; ordering is blocked until the Shopify store is reconnected.
 - [ ] Add BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs to the catalogue and the payment system. Price shows "Price on request" as the owner chose; ordering is blocked until the Shopify store is reconnected.
-- [ ] Add Puma Speedcat OG Low-Top to the catalogue and the payment system. Blocked: price amount not confirmed and the Shopify store must be reconnected.
+- [ ] Add Puma Speedcat OG Low-Top (R1 600,00) to the catalogue and the payment system. Ordering is blocked until the Shopify store is reconnected.
+- [ ] Add red Puma Speedcat OG Low-Top to the catalogue and the payment system. Price shows "Price on request" until the owner confirms; ordering is blocked until the Shopify store is reconnected.
 - [ ] Verify owner price saving end-to-end. Blocked: eshoesole@gmail.com must create and verify its owner account on Pricing first.
 - [x] Undo the uploaded navigation/footer logo and use the latest silver-on-black ATELIER image as the catalogue cover instead.
 - [ ] Add prices to all seven shoes. Blocked: the owner has not supplied price amounts.
