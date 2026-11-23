@@ -21,6 +21,9 @@ import nbPair from '@/assets/nb-1906r-pair.jpeg.asset.json';
 import timberlandSide from '@/assets/timberland-boot-side.jpeg.asset.json';
 import timberlandPair from '@/assets/timberland-boot-pair.jpeg.asset.json';
 import timberlandTop from '@/assets/timberland-boot-top.jpeg.asset.json';
+import asicsSide from '@/assets/asics-kayano-side.jpeg.asset.json';
+import asicsPair from '@/assets/asics-kayano-pair.jpeg.asset.json';
+import asicsSole from '@/assets/asics-kayano-sole.jpeg.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
@@ -33,6 +36,7 @@ export const collection: CollectionPiece[] = [
   { id: '07', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Beige', images: [muleBeigePair.url] },
   { id: '08', name: "New Balance Men's 1906R", price: 1900, category: 'Sneakers', colour: 'White', images: [nbSide.url, nbTop.url, nbPair.url] },
   { id: '09', name: "Timberland 6 Inch Premium Waterproof Lace-Up Boots", price: 2600, category: 'Boots', colour: 'Black', images: [timberlandSide.url, timberlandPair.url, timberlandTop.url] },
+  { id: '10', name: 'Asics Gel-Kayano', price: 1800, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
