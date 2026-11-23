@@ -23,7 +23,7 @@ export function CollectionGallery({ filters = false }: { filters?: boolean }) {
   const { data: shopProducts = [] } = useQuery(shopifyProductsQuery);
   const addItem = useCartStore(s => s.addItem);
   const adding = useCartStore(s => s.isLoading);
-  const priceFor = (id: string) => { const v = productForPiece(shopProducts, id)?.variants[0]; return v ? formatPrice(parseFloat(v.price.amount)) : formatPrice(prices[id]); };
+  const priceFor = (id: string) => { const v = productForPiece(shopProducts, id)?.variants[0]; return v ? formatPrice(parseFloat(v.price.amount)) : formatPrice(prices[id] ?? collection.find(p => p.id === id)?.price); };
   const open = (piece: CollectionPiece) => { setSelected(piece); setPhoto(0); setSize(''); };
   const selectedProduct = selected ? productForPiece(shopProducts, selected.id) : undefined;
   const addToBag = async () => {
