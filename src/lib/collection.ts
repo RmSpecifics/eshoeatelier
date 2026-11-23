@@ -36,6 +36,9 @@ import pumaTop from '@/assets/puma-speedcat-top.jpeg.asset.json';
 import pumaRedSide from '@/assets/puma-speedcat-red-side.jpeg.asset.json';
 import pumaRedFront from '@/assets/puma-speedcat-red-front.jpeg.asset.json';
 import pumaRedPair from '@/assets/puma-speedcat-red-pair.jpeg.asset.json';
+import nikeP6000Side from '@/assets/nike-p6000-side.jpeg.asset.json';
+import nikeP6000Pair from '@/assets/nike-p6000-pair.jpeg.asset.json';
+import nikeP6000Heel from '@/assets/nike-p6000-heel.jpeg.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
@@ -53,6 +56,7 @@ export const collection: CollectionPiece[] = [
   { id: '12', name: 'BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs', category: 'Clogs', colour: 'Pink', images: [bapePinkSide.url, bapePinkTop.url, bapePinkPair.url] },
   { id: '13', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Pink', images: [pumaFront.url, pumaSide.url, pumaTop.url] },
   { id: '14', name: 'Puma Speedcat OG Low-Top', category: 'Sneakers', colour: 'Red', images: [pumaRedSide.url, pumaRedFront.url, pumaRedPair.url] },
+  { id: '15', name: "Nike P-6000 Women's", price: 1400, category: 'Sneakers', colour: 'Silver', images: [nikeP6000Side.url, nikeP6000Pair.url, nikeP6000Heel.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
