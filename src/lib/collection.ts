@@ -15,6 +15,9 @@ import muleBlackPair from '@/assets/adidas-mule-black-pair.png.asset.json';
 import muleBlackTop from '@/assets/adidas-mule-black-top.png.asset.json';
 import muleBlackSide from '@/assets/adidas-mule-black-side.png.asset.json';
 import muleBeigePair from '@/assets/adidas-mule-beige-pair.png.asset.json';
+import nbSide from '@/assets/nb-1906r-side.jpeg.asset.json';
+import nbTop from '@/assets/nb-1906r-top.jpeg.asset.json';
+import nbPair from '@/assets/nb-1906r-pair.jpeg.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
@@ -25,6 +28,7 @@ export const collection: CollectionPiece[] = [
   { id: '05', name: 'Nike Dunk Low', price: 1500, category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url] },
   { id: '06', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url] },
   { id: '07', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Beige', images: [muleBeigePair.url] },
+  { id: '08', name: "New Balance Men's 1906R", price: 1900, category: 'Sneakers', colour: 'White', images: [nbSide.url, nbTop.url, nbPair.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
