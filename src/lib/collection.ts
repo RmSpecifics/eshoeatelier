@@ -42,6 +42,9 @@ import nikeP6000Heel from '@/assets/nike-p6000-heel.jpeg.asset.json';
 import nikeP6000BlackSide from '@/assets/nike-p6000-black-side.jpeg.asset.json';
 import nikeP6000BlackPair from '@/assets/nike-p6000-black-pair.jpeg.asset.json';
 import nikeP6000BlackHeel from '@/assets/nike-p6000-black-heel.jpeg.asset.json';
+import nikeAm95Side from '@/assets/nike-am95-pink-side.jpeg.asset.json';
+import nikeAm95Pair from '@/assets/nike-am95-pink-pair.jpeg.asset.json';
+import nikeAm95Front from '@/assets/nike-am95-pink-front.jpeg.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
@@ -61,6 +64,7 @@ export const collection: CollectionPiece[] = [
   { id: '14', name: 'Puma Speedcat OG Low-Top', category: 'Sneakers', colour: 'Red', images: [pumaRedSide.url, pumaRedFront.url, pumaRedPair.url] },
   { id: '15', name: "Nike P-6000 Women's", price: 1400, category: 'Sneakers', colour: 'Silver', images: [nikeP6000Side.url, nikeP6000Pair.url, nikeP6000Heel.url] },
   { id: '16', name: 'Nike P-6000', price: 1700, category: 'Sneakers', colour: 'Black', images: [nikeP6000BlackSide.url, nikeP6000BlackPair.url, nikeP6000BlackHeel.url] },
+  { id: '17', name: "Nike Air Max 95 'Pink Foam'", price: 1600, category: 'Sneakers', colour: 'Pink', images: [nikeAm95Side.url, nikeAm95Pair.url, nikeAm95Front.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
