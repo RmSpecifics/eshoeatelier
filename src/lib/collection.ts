@@ -27,6 +27,9 @@ import asicsSole from '@/assets/asics-kayano-sole.jpeg.asset.json';
 import bapeSide from '@/assets/bape-crocs-side.jpeg.asset.json';
 import bapePair from '@/assets/bape-crocs-pair.jpeg.asset.json';
 import bapeHeel from '@/assets/bape-crocs-heel.jpeg.asset.json';
+import bapePinkSide from '@/assets/bape-pink-crocs-side.jpeg.asset.json';
+import bapePinkTop from '@/assets/bape-pink-crocs-top.jpeg.asset.json';
+import bapePinkPair from '@/assets/bape-pink-crocs-pair.jpeg.asset.json';
 
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
@@ -41,6 +44,7 @@ export const collection: CollectionPiece[] = [
   { id: '09', name: "Timberland 6 Inch Premium Waterproof Lace-Up Boots", price: 2600, category: 'Boots', colour: 'Black', images: [timberlandSide.url, timberlandPair.url, timberlandTop.url] },
   { id: '10', name: 'Asics Gel-Kayano', price: 1800, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url] },
   { id: '11', name: 'APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs', category: 'Clogs', colour: 'Blue', images: [bapeSide.url, bapePair.url, bapeHeel.url] },
+  { id: '12', name: 'BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs', category: 'Clogs', colour: 'Pink', images: [bapePinkSide.url, bapePinkTop.url, bapePinkPair.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
