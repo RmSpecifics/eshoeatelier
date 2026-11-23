@@ -24,8 +24,11 @@ import timberlandTop from '@/assets/timberland-boot-top.jpeg.asset.json';
 import asicsSide from '@/assets/asics-kayano-side.jpeg.asset.json';
 import asicsPair from '@/assets/asics-kayano-pair.jpeg.asset.json';
 import asicsSole from '@/assets/asics-kayano-sole.jpeg.asset.json';
+import bapeSide from '@/assets/bape-crocs-side.jpeg.asset.json';
+import bapePair from '@/assets/bape-crocs-pair.jpeg.asset.json';
+import bapeHeel from '@/assets/bape-crocs-heel.jpeg.asset.json';
 
-export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots'; colour: string; images: string[] };
+export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[] };
 export const collection: CollectionPiece[] = [
   { id: '01', name: 'Christian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'Mens Diesel Slides', price: 1560, category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
@@ -37,6 +40,7 @@ export const collection: CollectionPiece[] = [
   { id: '08', name: "New Balance Men's 1906R", price: 1900, category: 'Sneakers', colour: 'White', images: [nbSide.url, nbTop.url, nbPair.url] },
   { id: '09', name: "Timberland 6 Inch Premium Waterproof Lace-Up Boots", price: 2600, category: 'Boots', colour: 'Black', images: [timberlandSide.url, timberlandPair.url, timberlandTop.url] },
   { id: '10', name: 'Asics Gel-Kayano', price: 1800, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url] },
+  { id: '11', name: 'APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs', category: 'Clogs', colour: 'Blue', images: [bapeSide.url, bapePair.url, bapeHeel.url] },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
