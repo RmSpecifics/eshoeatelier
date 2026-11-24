@@ -46,7 +46,9 @@ import nikeAm95Side from '@/assets/nike-am95-pink-side.jpeg.asset.json';
 import nikeAm95Pair from '@/assets/nike-am95-pink-pair.jpeg.asset.json';
 import nikeAm95Front from '@/assets/nike-am95-pink-front.jpeg.asset.json';
 
-export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[] };
+export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[]; sizes?: string[] };
+export const SIZES = ['UK 3', 'UK 4', 'UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'];
+export const SIZES_FROM_3 = SIZES;
 export const collection: CollectionPiece[] = [
   { id: '01', name: 'Christian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'Mens Diesel Slides', price: 1260, category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
@@ -58,19 +60,18 @@ export const collection: CollectionPiece[] = [
   { id: '08', name: "New Balance Men's 1906R", price: 1800, category: 'Sneakers', colour: 'White', images: [nbSide.url, nbTop.url, nbPair.url] },
   { id: '09', name: "Timberland 6 Inch Premium Waterproof Lace-Up Boots", price: 2600, category: 'Boots', colour: 'Black', images: [timberlandSide.url, timberlandPair.url, timberlandTop.url] },
   { id: '10', name: 'Asics Gel-Kayano', price: 1700, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url] },
-  { id: '11', name: 'APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs', price: 1600, category: 'Clogs', colour: 'Blue', images: [bapeSide.url, bapePair.url, bapeHeel.url] },
-  { id: '12', name: 'BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs', category: 'Clogs', colour: 'Pink', images: [bapePinkSide.url, bapePinkTop.url, bapePinkPair.url] },
-  { id: '13', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Pink', images: [pumaFront.url, pumaSide.url, pumaTop.url] },
-  { id: '14', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Red', images: [pumaRedSide.url, pumaRedFront.url, pumaRedPair.url] },
-  { id: '15', name: "Nike P-6000 Women's", price: 1400, category: 'Sneakers', colour: 'Silver', images: [nikeP6000Side.url, nikeP6000Pair.url, nikeP6000Heel.url] },
-  { id: '16', name: 'Nike P-6000', price: 1700, category: 'Sneakers', colour: 'Black', images: [nikeP6000BlackSide.url, nikeP6000BlackPair.url, nikeP6000BlackHeel.url] },
-  { id: '17', name: "Nike Air Max 95 'Pink Foam'", price: 1600, category: 'Sneakers', colour: 'Pink', images: [nikeAm95Side.url, nikeAm95Pair.url, nikeAm95Front.url] },
+  { id: '11', name: 'APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs', price: 1600, category: 'Clogs', colour: 'Blue', images: [bapeSide.url, bapePair.url, bapeHeel.url], sizes: SIZES_FROM_3 },
+  { id: '12', name: 'BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs', category: 'Clogs', colour: 'Pink', images: [bapePinkSide.url, bapePinkTop.url, bapePinkPair.url], sizes: SIZES_FROM_3 },
+  { id: '13', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Pink', images: [pumaFront.url, pumaSide.url, pumaTop.url], sizes: SIZES_FROM_3 },
+  { id: '14', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Red', images: [pumaRedSide.url, pumaRedFront.url, pumaRedPair.url], sizes: SIZES_FROM_3 },
+  { id: '15', name: "Nike P-6000 Women's", price: 1400, category: 'Sneakers', colour: 'Silver', images: [nikeP6000Side.url, nikeP6000Pair.url, nikeP6000Heel.url], sizes: SIZES_FROM_3 },
+  { id: '16', name: 'Nike P-6000', price: 1700, category: 'Sneakers', colour: 'Black', images: [nikeP6000BlackSide.url, nikeP6000BlackPair.url, nikeP6000BlackHeel.url], sizes: SIZES_FROM_3 },
+  { id: '17', name: "Nike Air Max 95 'Pink Foam'", price: 1600, category: 'Sneakers', colour: 'Pink', images: [nikeAm95Side.url, nikeAm95Pair.url, nikeAm95Front.url], sizes: SIZES_FROM_3 },
 ];
 export function pageHead(title: string, description: string, path: string) {
   return { meta: [{ title: `${title} — E'SHOE ATELIER` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} — E'SHOE ATELIER` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: path }, { name: 'twitter:card', content: 'summary_large_image' }], links: [{ rel: 'canonical', href: path }] };
 }
 // Prices in ZAR: leave undefined until the owner confirms them (shown as "Price on request").
-export const SIZES = ['UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'];
 export const formatPrice = (p?: number) => {
   if (p === undefined) return 'Price on request';
   const [whole = '0', cents = '00'] = p.toFixed(2).split('.');
