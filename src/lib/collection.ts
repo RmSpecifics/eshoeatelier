@@ -49,17 +49,18 @@ import nikeAm95Front from '@/assets/nike-am95-pink-front.jpeg.asset.json';
 export type CollectionPiece = { id: string; name: string; price?: number; category: 'Sneakers' | 'Slides' | 'Mules' | 'Boots' | 'Clogs'; colour: string; images: string[]; sizes?: string[] };
 export const SIZES = ['UK 3', 'UK 4', 'UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'];
 export const SIZES_FROM_3 = SIZES;
+export const SIZES_FROM_4 = SIZES.filter(s => s !== 'UK 3');
 export const collection: CollectionPiece[] = [
   { id: '01', name: 'Christian Louboutin', price: 8000, category: 'Sneakers', colour: 'Black', images: [sneaker.url, sneakerFront.url, sneakerSide.url] },
   { id: '02', name: 'Mens Diesel Slides', price: 1260, category: 'Slides', colour: 'Olive', images: [olive.url, oliveTop.url] },
   { id: '03', name: 'Mens Diesel Slides', price: 1260, category: 'Slides', colour: 'Black', images: [slide.url, slidePair.url] },
-  { id: '04', name: 'Nike Vomero Roam', price: 1750, category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url] },
-  { id: '05', name: 'Nike Dunk Low', price: 1500, category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url] },
-  { id: '06', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url] },
-  { id: '07', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Beige', images: [muleBeigePair.url] },
+  { id: '04', name: 'Nike Vomero Roam', price: 1750, category: 'Sneakers', colour: 'Blue', images: [vomeroPair.url, vomeroTop.url, vomeroSide.url], sizes: SIZES_FROM_4 },
+  { id: '05', name: 'Nike Dunk Low', price: 1500, category: 'Sneakers', colour: 'Grey', images: [dunkPair.url, dunkTop.url, dunkSide.url], sizes: SIZES_FROM_4 },
+  { id: '06', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Black', images: [muleBlackPair.url, muleBlackTop.url, muleBlackSide.url], sizes: SIZES_FROM_4 },
+  { id: '07', name: 'Adidas mule', price: 1450, category: 'Mules', colour: 'Beige', images: [muleBeigePair.url], sizes: SIZES_FROM_4 },
   { id: '08', name: "New Balance Men's 1906R", price: 1800, category: 'Sneakers', colour: 'White', images: [nbSide.url, nbTop.url, nbPair.url] },
   { id: '09', name: "Timberland 6 Inch Premium Waterproof Lace-Up Boots", price: 2600, category: 'Boots', colour: 'Black', images: [timberlandSide.url, timberlandPair.url, timberlandTop.url] },
-  { id: '10', name: 'Asics Gel-Kayano', price: 1700, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url] },
+  { id: '10', name: 'Asics Gel-Kayano', price: 1700, category: 'Sneakers', colour: 'Silver', images: [asicsSide.url, asicsPair.url, asicsSole.url], sizes: SIZES_FROM_4 },
   { id: '11', name: 'APE x Crocs M9 A Bathing Ape ABC Camo Blue Classic Clogs', price: 1600, category: 'Clogs', colour: 'Blue', images: [bapeSide.url, bapePair.url, bapeHeel.url], sizes: SIZES_FROM_3 },
   { id: '12', name: 'BAPE x Crocs M9 A Bathing Ape ABC Camo Pink Classic Clogs', category: 'Clogs', colour: 'Pink', images: [bapePinkSide.url, bapePinkTop.url, bapePinkPair.url], sizes: SIZES_FROM_3 },
   { id: '13', name: 'Puma Speedcat OG Low-Top', price: 1600, category: 'Sneakers', colour: 'Pink', images: [pumaFront.url, pumaSide.url, pumaTop.url], sizes: SIZES_FROM_3 },
